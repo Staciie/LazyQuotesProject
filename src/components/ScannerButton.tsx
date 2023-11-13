@@ -6,7 +6,7 @@ function ScannerButton() {
   return (
     <TouchableOpacity>
       <View style={styles.barcodeContainer}>
-        <BarcodeIcon />
+        <BarcodeIcon color='white' />
       </View>
     </TouchableOpacity>
   );
@@ -14,14 +14,9 @@ function ScannerButton() {
 
 const styles = StyleSheet.create({
   barcodeContainer: {
-    padding: 10,
+    padding: 15,
     borderRadius: 50,
-    borderColor: '#037bfc',
-    borderWidth: 4,
-    shadowOffset: {width: 0, height: 2},
-    shadowColor: '#001524',
-    shadowOpacity: 0.8,
-    shadowRadius: 7,
+    backgroundColor:  '#4c87e6'
   },
 });
 export default ScannerButton;

@@ -1,7 +1,15 @@
 import React from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import BookSection from '../components/BookSection';
 import ScannerButton from '../components/ScannerButton';
+import auth from '@react-native-firebase/auth';
 
 const bookData = [
   {
@@ -35,7 +43,7 @@ const BOOK_STATUS = {
   1: 'Have read',
 };
 
-function HomeScreen() {
+function HomeScreen({navigation}) {
   const statuses = Object.values(BOOK_STATUS);
 
   return (
@@ -48,6 +56,19 @@ function HomeScreen() {
       <View style={styles.bottomContainer}>
         <ScannerButton />
       </View>
+      <TouchableOpacity
+        onPress={() =>
+          auth()
+            .signOut()
+            .then(() =>
+              navigation.reset({
+                index: 0,
+                routes: [{name: 'SignIn'}],
+              }),
+            )
+        }>
+        <Text>Log out</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
