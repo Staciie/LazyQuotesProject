@@ -20,8 +20,12 @@ interface IBookCardProp {
 }
 
 function BookCard({bookData}: IBookCardProp) {
+  const onCardPress = () => {};
+
+  bookData.img = bookData.img.replace('http:', 'https:');
+
   return (
-    <TouchableOpacity style={styles.bookCardContainer}>
+    <TouchableOpacity style={styles.bookCardContainer} onPress={onCardPress}>
       <View style={styles.coverWithBackContainer}>
         <View style={styles.bookCoverContainer}>
           <Image

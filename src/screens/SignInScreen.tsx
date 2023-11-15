@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
+  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -10,21 +11,22 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import GoogleIcon from '../icons/GoogleIcon';
 
 function SignInScreen({navigation}: any) {
   // should save somewhere
-  const [userInfo, setUserInfo] = useState();
-
   async function onGoogleButtonPress() {
     try {
       const {idToken} = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
       // Sign-in the user with the credential
-      auth().signInWithCredential(googleCredential);
+      const user = await auth().signInWithCredential(googleCredential);
+      const jsonValue = JSON.stringify(user.user);
+      await AsyncStorage.setItem('user', jsonValue);
       navigation.reset({
         index: 0,
-        routes: [{name: 'Home'}],
+        routes: [{name: 'Home', params: {user: user.user}}],
       });
     } catch (error) {
       console.log(error);
@@ -42,8 +44,17 @@ function SignInScreen({navigation}: any) {
 
   return (
     <SafeAreaView style={styles.screenContainer}>
-      <TouchableOpacity style={styles.button} onPress={onGoogleButtonPress}>
-        <Text>Sign In with Google</Text>
+      <Text style={styles.welcomeLabel}>Welcome!</Text>
+      <Image
+        source={require('../icons/LogoSloth.png')}
+        resizeMode="contain"
+        style={styles.signInLogo}
+      />
+      <TouchableOpacity
+        style={styles.buttonContainer}
+        onPress={onGoogleButtonPress}>
+        <GoogleIcon />
+        <Text style={styles.buttonText}>Sign In with Google</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -54,9 +65,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    backgroundColor: '#C7DCA7',
   },
-  button: {
-    backgroundColor: 'skyblue',
+  buttonContainer: {
+    backgroundColor: '#C1ECE4',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderColor: '#3AA6B9',
+    borderWidth: 2,
+    borderRadius: 50,
+  },
+
+  buttonText: {
+    fontFamily: 'Quicksand-Medium',
+    paddingLeft: 10,
+    fontSize: 16,
+  },
+  welcomeLabel: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 30,
+    color: '#3AA6B9',
+  },
+  signInLogo: {
+    height: '30%',
+    marginVertical: 20,
   },
 });
 export default SignInScreen;

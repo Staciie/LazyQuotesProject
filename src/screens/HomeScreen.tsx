@@ -1,74 +1,54 @@
-import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import BookSection from '../components/BookSection';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import BookSection, {IDataItem} from '../components/BookSection';
 import ScannerButton from '../components/ScannerButton';
-import auth from '@react-native-firebase/auth';
-
-const bookData = [
-  {
-    title: '1984',
-    author: 'George Orwell',
-    img: 'https://upload.wikimedia.org/wikipedia/en/5/51/1984_first_edition_cover.jpg',
-    status: 0,
-  },
-  {
-    title: 'The Shining',
-    author: 'Stephen King',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/The_Shining_%281977%29_front_cover%2C_first_edition.jpg/440px-The_Shining_%281977%29_front_cover%2C_first_edition.jpg',
-    status: 1,
-  },
-  {
-    title: 'Murder at the House on the Hill',
-    author: 'Victoria Walters',
-    img: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1625679712i/58510488.jpg',
-    status: 1,
-  },
-  {
-    title: 'Murder at the House on the Hill',
-    author: 'Victoria Walters',
-    img: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1625679712i/58510488.jpg',
-    status: 1,
-  },
-];
+import {collection, doc, onSnapshot} from 'firebase/firestore';
+import {FIRESTORE_DB} from '../../firebaseConfig';
 
 const BOOK_STATUS = {
   0: 'Currently reading',
   1: 'Have read',
 };
 
-function HomeScreen({navigation}) {
+function HomeScreen(props) {
   const statuses = Object.values(BOOK_STATUS);
+  const [books, setBooks] = useState();
+  const [loading, setLoading] = useState(true);
+  const userId: string = props.route.params.user.uid;
 
+  useEffect(() => {
+    const collectionRef = collection(FIRESTORE_DB, 'users');
+    const userRef = doc(collectionRef, userId);
+    const listRef = collection(userRef, 'list');
+    // const listRef = collection(db, `AoT5RkyiSSdvmCtKqtLiD5VZrk02`);
+
+    const subscriber = onSnapshot(listRef, {
+      next: (snapshot) => {
+        const bookList: any[] = [];
+        snapshot.docs.forEach((doc) => {
+          bookList.push({id: doc.id, ...doc.data()});
+        });
+        setBooks(bookList);
+        setLoading(false);
+      },
+    });
+
+    return () => subscriber();
+  }, []);
+
+  if (loading) {
+    return <Text>Loading ...</Text>;
+  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollContainer}>
-        {statuses.map(status => (
-          <BookSection status={status} dataList={bookData} />
+        {statuses.map((status) => (
+          <BookSection status={status} dataList={books} />
         ))}
       </ScrollView>
       <View style={styles.bottomContainer}>
-        <ScannerButton />
+        <ScannerButton userId={userId} />
       </View>
-      <TouchableOpacity
-        onPress={() =>
-          auth()
-            .signOut()
-            .then(() =>
-              navigation.reset({
-                index: 0,
-                routes: [{name: 'SignIn'}],
-              }),
-            )
-        }>
-        <Text>Log out</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
