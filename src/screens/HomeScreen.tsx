@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
-import BookSection, {IDataItem} from '../components/BookSection';
+import BookSection from '../components/BookSection';
 import ScannerButton from '../components/ScannerButton';
 import {collection, doc, onSnapshot} from 'firebase/firestore';
-import {FIRESTORE_DB} from '../../firebaseConfig';
+import {FIRESTORE_DB} from '../config/firebaseConfig';
 
 const BOOK_STATUS = {
   0: 'Currently reading',

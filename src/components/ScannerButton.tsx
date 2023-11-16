@@ -3,7 +3,7 @@ import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import BarcodeIcon from '../icons/BarcodeIcon';
 import axios from 'axios';
 import {addDoc, collection, doc} from 'firebase/firestore';
-import {FIRESTORE_DB} from '../../firebaseConfig';
+import {FIRESTORE_DB} from '../config/firebaseConfig';
 import {processFetchedBookData} from '../services/processData';
 
 function ScannerButton({userId}: {userId: string}) {
