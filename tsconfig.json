@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*", "src/types/env.d.ts"],
+  "include": ["src/**/*", "src/types/env.d.ts", "**/*.tsx"],
   "typeRoots": ["./src/types"]
 }

@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import BookSection from '../components/BookSection';
 import ScannerButton from '../components/ScannerButton';
-import {collection, doc, onSnapshot} from 'firebase/firestore';
-import {FIRESTORE_DB} from '../config/firebaseConfig';
+import {onSnapshot} from 'firebase/firestore';
+import {getListByUserId} from '../services/dbService';
 
 const BOOK_STATUS = {
   0: 'Currently reading',
@@ -17,9 +17,7 @@ function HomeScreen(props) {
   const userId: string = props.route.params.user.uid;
 
   useEffect(() => {
-    const collectionRef = collection(FIRESTORE_DB, 'users');
-    const userRef = doc(collectionRef, userId);
-    const listRef = collection(userRef, 'list');
+    const listRef = getListByUserId(userId);
     // const listRef = collection(db, `AoT5RkyiSSdvmCtKqtLiD5VZrk02`);
 
     const subscriber = onSnapshot(listRef, {

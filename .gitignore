@@ -70,9 +70,8 @@ google-services.json
 GoogleService-Info.plist
 
 settings.json
-
 .gitignore
-
 project.pbxproj
-
 firebaseConfig.ts
+.eslintignore
+.env

@@ -1,3 +1,4 @@
+import {WEB_CLIENT_ID} from '@env';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import RootNavigation from './src/navigation/RootNavigation';
@@ -14,8 +15,7 @@ const MyTheme = {
 };
 
 GoogleSignin.configure({
-  webClientId:
-    '438128417949-feqnbvc8dn4oje3t2pemtvcuhvd1h7ke.apps.googleusercontent.com',
+  webClientId: WEB_CLIENT_ID,
 });
 
 function App(): JSX.Element {
