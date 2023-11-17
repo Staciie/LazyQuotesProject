@@ -4,35 +4,43 @@ import BookSection from '../components/BookSection';
 import ScannerButton from '../components/ScannerButton';
 import {onSnapshot} from 'firebase/firestore';
 import {getListByUserId} from '../services/dbService';
+import {getUserData} from '../store/keychainService';
 
 const BOOK_STATUS = {
   0: 'Currently reading',
   1: 'Have read',
 };
 
-function HomeScreen(props) {
+function HomeScreen() {
   const statuses = Object.values(BOOK_STATUS);
   const [books, setBooks] = useState();
   const [loading, setLoading] = useState(true);
-  const userId: string = props.route.params.user.uid;
+  const [userId, setUserId] = useState<string>();
+
+  const subscriber = () => {
+    if (!userId) {
+      getUserData().then(({uid}) => {
+        setUserId(uid);
+      });
+    } else {
+      const listRef = getListByUserId(userId);
+      onSnapshot(listRef, {
+        next: (snapshot) => {
+          const bookList: any[] = [];
+          snapshot.docs.forEach((doc) => {
+            bookList.push({id: doc.id, ...doc.data()});
+          });
+          setBooks(bookList);
+          setLoading(false);
+        },
+      });
+    }
+  };
 
   useEffect(() => {
-    const listRef = getListByUserId(userId);
-    // const listRef = collection(db, `AoT5RkyiSSdvmCtKqtLiD5VZrk02`);
-
-    const subscriber = onSnapshot(listRef, {
-      next: (snapshot) => {
-        const bookList: any[] = [];
-        snapshot.docs.forEach((doc) => {
-          bookList.push({id: doc.id, ...doc.data()});
-        });
-        setBooks(bookList);
-        setLoading(false);
-      },
-    });
-
+    subscriber();
     return () => subscriber();
-  }, []);
+  }, [userId]);
 
   if (loading) {
     return <Text>Loading ...</Text>;
@@ -40,12 +48,12 @@ function HomeScreen(props) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollContainer}>
-        {statuses.map((status) => (
-          <BookSection status={status} dataList={books} />
+        {statuses.map((status, index) => (
+          <BookSection status={status} dataList={books} key={index} />
         ))}
       </ScrollView>
       <View style={styles.bottomContainer}>
-        <ScannerButton userId={userId} />
+        <ScannerButton />
       </View>
     </SafeAreaView>
   );

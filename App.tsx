@@ -5,6 +5,7 @@ import RootNavigation from './src/navigation/RootNavigation';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import {View, Text} from 'react-native';
+import { getUserData, setUserData } from './src/store/keychainService';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -20,11 +21,10 @@ GoogleSignin.configure({
 
 function App(): JSX.Element {
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState();
-  const [hasSignedIn, setUserSignedIn] = useState(false);
+  const [signedIn, setUserSignedIn] = useState(false);
 
-  function onAuthStateChanged(user) {
-    setUser(user);
+  function onAuthStateChanged(user: any) {
+    getUserData().then(({uid}) =>  uid !== user.uid ?  setUserData({user}) : null);
     setUserSignedIn(user ? true : false);
     if (initializing) {
       setInitializing(false);
@@ -46,7 +46,7 @@ function App(): JSX.Element {
 
   return (
     <NavigationContainer theme={MyTheme}>
-      <RootNavigation hasSignedIn={hasSignedIn} user={user} />
+      <RootNavigation hasSignedIn={signedIn}/>
     </NavigationContainer>
   );
 }

@@ -21,8 +21,6 @@ export interface IDataItem {
 }
 
 function BookSection(props: {status: string; dataList: IDataItem[]}) {
-  //   const statuses = Object.values(BOOK_STATUS);
-  //   console.log(statuses);
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>{props.status}</Text>
@@ -30,7 +28,10 @@ function BookSection(props: {status: string; dataList: IDataItem[]}) {
         {props.dataList?.map(
           (item) =>
             BOOK_STATUS[item.status] === props.status && (
-              <BookCard bookData={{...item, color: generatePastelColor()}} />
+              <BookCard
+                bookData={{...item, color: generatePastelColor()}}
+                key={item.id}
+              />
             ),
         )}
       </ScrollView>

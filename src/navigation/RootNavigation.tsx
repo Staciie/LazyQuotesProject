@@ -5,23 +5,18 @@ import SignInScreen from '../screens/SignInScreen';
 import SignOutIcon from '../icons/SignOutIcon';
 import auth from '@react-native-firebase/auth';
 import {TouchableOpacity} from 'react-native';
+import {resetGenericPassword} from 'react-native-keychain';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const Stack = createNativeStackNavigator();
 
-const RootNavigation = ({
-  hasSignedIn,
-  user,
-}: {
-  hasSignedIn: boolean;
-  user: any;
-}) => {
+const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
   const initialRoute = hasSignedIn ? 'Home' : 'SignIn';
 
   return (
     <Stack.Navigator initialRouteName={initialRoute}>
       <Stack.Screen
         name="Home"
-        initialParams={{user: user}}
         component={HomeScreen}
         options={({navigation}) => ({
           headerTintColor: '#037bfc',
@@ -35,12 +30,14 @@ const RootNavigation = ({
               onPress={() => {
                 auth()
                   .signOut()
-                  .then(() =>
+                  .then(() => {
+                    GoogleSignin.revokeAccess();
+                    resetGenericPassword();
                     navigation.reset({
                       index: 0,
                       routes: [{name: 'SignIn'}],
-                    }),
-                  );
+                    });
+                  });
               }}>
               <SignOutIcon />
             </TouchableOpacity>

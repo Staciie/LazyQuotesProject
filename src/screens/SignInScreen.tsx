@@ -11,8 +11,8 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import GoogleIcon from '../icons/GoogleIcon';
+import {setUserData} from '../store/keychainService';
 
 function SignInScreen({navigation}: any) {
   // should save somewhere
@@ -22,8 +22,7 @@ function SignInScreen({navigation}: any) {
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       // Sign-in the user with the credential
       const user = await auth().signInWithCredential(googleCredential);
-      const jsonValue = JSON.stringify(user.user);
-      await AsyncStorage.setItem('user', jsonValue);
+      setUserData(user);
       navigation.reset({
         index: 0,
         routes: [{name: 'Home', params: {user: user.user}}],
