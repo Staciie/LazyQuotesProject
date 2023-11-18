@@ -7,6 +7,7 @@ import auth from '@react-native-firebase/auth';
 import {TouchableOpacity} from 'react-native';
 import {resetGenericPassword} from 'react-native-keychain';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import SearchScreen from '../screens/SearchScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +15,15 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
   const initialRoute = hasSignedIn ? 'Home' : 'SignIn';
 
   return (
-    <Stack.Navigator initialRouteName={initialRoute}>
+    <Stack.Navigator
+      screenOptions={() => ({
+        headerStyle: {
+          backgroundColor: '#EBF3E8',
+        },
+        headerShadowVisible: false,
+        headerBackTitleVisible: false,
+      })}
+      initialRouteName={initialRoute}>
       <Stack.Screen
         name="Home"
         component={HomeScreen}
@@ -23,8 +32,6 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          headerShadowVisible: false,
-          headerBackTitleVisible: false,
           headerRight: () => (
             <TouchableOpacity
               onPress={() => {
@@ -51,6 +58,7 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
           headerShown: false,
         }}
       />
+      <Stack.Screen name="Search" component={SearchScreen} />
     </Stack.Navigator>
   );
 };

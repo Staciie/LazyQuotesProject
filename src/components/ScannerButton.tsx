@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import BarcodeIcon from '../icons/BarcodeIcon';
-import axios from 'axios';
-import {processFetchedBookData} from '../services/dataProcessService';
-import {postBook} from '../services/dbService';
 import {getUserData} from '../store/keychainService';
+import {useNavigation} from '@react-navigation/native';
 
 function ScannerButton() {
+  const navigation = useNavigation();
   const [uid, setUid] = useState<string>();
 
   useEffect(() => {
@@ -26,13 +25,7 @@ function ScannerButton() {
         {
           text: 'Add',
           onPress: (text) => {
-            axios
-              .get(`https://www.googleapis.com/books/v1/volumes?q=${text}`)
-              .then((result) => {
-                const dataToSend = processFetchedBookData(result);
-                postBook(uid, dataToSend);
-              })
-              .catch((error) => console.log(error));
+            navigation.navigate('Search', {query: text});
           },
         },
       ],
