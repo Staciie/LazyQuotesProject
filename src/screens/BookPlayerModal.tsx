@@ -9,36 +9,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {BOOK_STATUS} from './HomeScreen';
-import RadioButtonIcon from '../icons/RadioButtonIcon';
 import {checkIfBookExists, deleteBook, postBook} from '../services/dbService';
 import {getUserData} from '../store/keychainService';
 import colorPallete from '../styles/color';
-
-const CustomRadioButton = ({label, selected, onSelect, disabled}) => (
-  <TouchableOpacity
-    disabled={disabled}
-    onPress={onSelect}
-    style={[
-      styles.radioButtonContainer,
-      {
-        backgroundColor: selected
-          ? colorPallete.primary + 80
-          : colorPallete.disabled + 50,
-        borderColor: selected ? colorPallete.primary : colorPallete.disabled,
-      },
-    ]}>
-    {selected && (
-      <RadioButtonIcon color={colorPallete.primary} style={{marginRight: 10}} />
-    )}
-    <Text
-      style={[
-        styles.radioButtonLabel,
-        {color: selected ? colorPallete.textSecondary : colorPallete.disabled},
-      ]}>
-      {label}
-    </Text>
-  </TouchableOpacity>
-);
+import CustomRadioButton from '../components/CustomRadioButton';
 
 function BookPlayerModal({route}) {
   const {volumeInfo, id} = route.params.bookItem;
@@ -70,11 +44,25 @@ function BookPlayerModal({route}) {
 
   const displayMeta = pageCount || language || publishedDate;
 
+  const onPress = () => {
+    !isAdded
+      ? postBook(userId, {
+          ...route.params.bookItem,
+          status: currentStatus,
+        })
+          .then(() => setIsAdded(!isAdded))
+          .catch(() => console.log('something went wrong'))
+      : deleteBook(userId, route.params.bookItem.id)
+          .then(() => setIsAdded(!isAdded))
+          .catch(() => console.log('something went wrong'));
+  };
+
   if (publishedDate) {
     publishedDate = moment(publishedDate, 'YYYY', true).isValid()
       ? publishedDate
       : moment(publishedDate).format('LL');
   }
+
   if (Array.isArray(authors)) authors = authors.join(', ');
 
   if (isLoading) {
@@ -112,18 +100,7 @@ function BookPlayerModal({route}) {
           </View>
           <TouchableOpacity
             style={styles.saveButtonContainer}
-            onPress={() =>
-              !isAdded
-                ? postBook(userId, {
-                    ...route.params.bookItem,
-                    status: currentStatus,
-                  })
-                    .then(() => setIsAdded(!isAdded))
-                    .catch(() => console.log('something went wrong'))
-                : deleteBook(userId, route.params.bookItem.id)
-                    .then(() => setIsAdded(!isAdded))
-                    .catch(() => console.log('something went wrong'))
-            }
+            onPress={onPress}
             disabled={currentStatus ? false : true}>
             <View
               style={[
@@ -277,23 +254,6 @@ const styles = StyleSheet.create({
     color: colorPallete.textSecondary,
     textAlign: 'justify',
   },
-  radioButtonsGroup: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  radioButtonContainer: {
-    borderRadius: 50,
-    paddingHorizontal: 10,
-    marginRight: 10,
-    borderWidth: 2,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  radioButtonLabel: {
-    lineHeight: 26,
-    fontFamily: 'Quicksand-Regular',
-  },
   titleContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -319,6 +279,10 @@ const styles = StyleSheet.create({
   saveButtonLabel: {
     fontFamily: 'Quicksand-Bold',
     fontSize: 16,
+  },
+  radioButtonsGroup: {
+    flexDirection: 'row',
+    marginBottom: 10,
   },
 });
 
