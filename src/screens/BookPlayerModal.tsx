@@ -14,8 +14,9 @@ import PlusIcon from '../icons/PlusIcon';
 import {postBook} from '../services/dbService';
 import {getUserData} from '../store/keychainService';
 
-const CustomRadioButton = ({label, selected}) => (
+const CustomRadioButton = ({label, selected, onSelect}) => (
   <TouchableOpacity
+    onPress={onSelect}
     style={[
       styles.radioButtonContainer,
       {
