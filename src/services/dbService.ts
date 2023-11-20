@@ -1,4 +1,4 @@
-import {collection, doc, getDoc, setDoc} from 'firebase/firestore';
+import {collection, deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore';
 import {db} from '../config/firebaseConfig';
 
 export const getListByUserId = (userId: string) => {
@@ -19,8 +19,14 @@ export const checkIfBookExists = async (userId: string, bookId: string) => {
   const bookSnap = await getDoc(bookRef);
 
   if (bookSnap.exists()) {
-    return true;
+    return bookSnap.data();
   } else {
     return false;
   }
+};
+
+export const deleteBook = async (userId: string, bookId: string) => {
+  const listRef = getListByUserId(userId);
+  const bookRef = doc(listRef, bookId);
+  await deleteDoc(bookRef);
 };

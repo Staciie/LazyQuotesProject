@@ -21,9 +21,9 @@ export type TColors = ColorTheme & SharedColors;
 type TColorPalette = TColors;
 
 const colorPallete: TColorPalette = {
-  primary: '#7BAE7F',
-  lightPrimary: '#7BAE7F50',
-  secondary: '#ED6A5A',
+  primary: '#4DA1A9',
+  lightPrimary: '#91818A50',
+  secondary: '#611C35',
   textPrimary: '#27233A',
   textSecondary: '#233342',
   background: '#FFFFFB',

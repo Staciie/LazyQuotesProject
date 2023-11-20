@@ -10,14 +10,13 @@ import {
 } from 'react-native';
 import {BOOK_STATUS} from './HomeScreen';
 import RadioButtonIcon from '../icons/RadioButtonIcon';
-import PlusIcon from '../icons/PlusIcon';
-import {checkIfBookExists, postBook} from '../services/dbService';
+import {checkIfBookExists, deleteBook, postBook} from '../services/dbService';
 import {getUserData} from '../store/keychainService';
 import colorPallete from '../styles/color';
-import TickIcon from '../icons/TickIcon';
 
-const CustomRadioButton = ({label, selected, onSelect}) => (
+const CustomRadioButton = ({label, selected, onSelect, disabled}) => (
   <TouchableOpacity
+    disabled={disabled}
     onPress={onSelect}
     style={[
       styles.radioButtonContainer,
@@ -58,9 +57,14 @@ function BookPlayerModal({route}) {
       });
     } else {
       checkIfBookExists(userId, id).then((response) => {
-        setIsAdded(response);
-        setIsLoading(false);
+        if (response) {
+          setCurrentStatus(response.status);
+          setIsAdded(true);
+        } else {
+          setIsAdded(false);
+        }
       });
+      setIsLoading(false);
     }
   }, [userId]);
 
@@ -102,38 +106,60 @@ function BookPlayerModal({route}) {
 
       <View style={styles.textContainer}>
         <View style={styles.titleContainer}>
-          <View>
+          <View style={styles.titleTextGroup}>
             {title && <Text style={styles.titleLabel}>{title}</Text>}
             {authors && <Text style={styles.authLabel}>({authors})</Text>}
           </View>
           <TouchableOpacity
             style={styles.saveButtonContainer}
             onPress={() =>
-              postBook(userId, {
-                ...route.params.bookItem,
-                status: currentStatus,
-              })
-                .then(() => console.log('yeeeah'))
-                .catch(() => console.log('fail'))
+              !isAdded
+                ? postBook(userId, {
+                    ...route.params.bookItem,
+                    status: currentStatus,
+                  })
+                    .then(() => setIsAdded(!isAdded))
+                    .catch(() => console.log('something went wrong'))
+                : deleteBook(userId, route.params.bookItem.id)
+                    .then(() => setIsAdded(!isAdded))
+                    .catch(() => console.log('something went wrong'))
             }
             disabled={currentStatus ? false : true}>
-            {!isAdded ? (
-              <PlusIcon
-                backgroudColor={
-                  currentStatus ? 'none' : colorPallete.disabled + 50
-                }
-                color={
-                  currentStatus ? colorPallete.secondary : colorPallete.disabled
-                }
-              />
-            ) : (
-              <TickIcon />
-            )}
+            <View
+              style={[
+                styles.saveButton,
+                !currentStatus
+                  ? {
+                      backgroundColor: colorPallete.disabled + 80,
+                      borderColor: colorPallete.disabled,
+                    }
+                  : {
+                      backgroundColor: colorPallete.secondary + 50,
+                      borderColor: colorPallete.secondary,
+                    },
+              ]}>
+              {!isAdded ? (
+                <Text
+                  style={[
+                    styles.saveButtonLabel,
+                    !currentStatus
+                      ? {
+                          color: colorPallete.disabled,
+                        }
+                      : {color: colorPallete.secondary},
+                  ]}>
+                  Add
+                </Text>
+              ) : (
+                <Text style={styles.saveButtonLabel}>Remove</Text>
+              )}
+            </View>
           </TouchableOpacity>
         </View>
         <View style={styles.radioButtonsGroup}>
           {Object.keys(BOOK_STATUS).map((status) => (
             <CustomRadioButton
+              disabled={isAdded}
               label={BOOK_STATUS[status]}
               selected={currentStatus === status}
               onSelect={() => setCurrentStatus(status)}
@@ -269,10 +295,30 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Regular',
   },
   titleContainer: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
+  },
+  titleTextGroup: {
+    flexGrow: 3,
+    flex: 1,
+  },
+  saveButtonContainer: {
+    flexGrow: 1,
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  saveButton: {
+    borderRadius: 10,
+    borderWidth: 2,
+    padding: 10,
+    alignItems: 'center',
+  },
+  saveButtonLabel: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 16,
   },
 });
 
