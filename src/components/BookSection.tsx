@@ -24,7 +24,10 @@ function BookSection(props: {status: string; dataList: IDataItem[]}) {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>{props.status}</Text>
-      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        style={styles.bookList}>
         {props.dataList?.map(
           (item) =>
             BOOK_STATUS[item.status] === props.status && (
@@ -48,6 +51,9 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: 'Ubuntu-Medium',
     fontSize: 24,
-    marginBottom: 20,
+    margin: 20,
+  },
+  bookList: {
+    padding: 10,
   },
 });

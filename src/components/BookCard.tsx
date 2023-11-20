@@ -21,19 +21,33 @@ interface IBookCardProp {
 
 function BookCard({bookData}: IBookCardProp) {
   const onCardPress = () => {};
+  const {volumeInfo, id} = bookData;
+  let {title, authors, description, pageCount, categories, imageLinks} =
+    volumeInfo;
 
-  bookData.img = bookData.img.replace('http:', 'https:');
+  if (Array.isArray(authors)) authors = authors.join(', ');
 
   return (
     <TouchableOpacity style={styles.bookCardContainer} onPress={onCardPress}>
       <View style={styles.coverWithBackContainer}>
         <View style={styles.bookCoverContainer}>
-          <Image
-            style={styles.bookCoverImg}
-            source={{
-              uri: bookData.img,
-            }}
-          />
+          {imageLinks?.thumbnail ? (
+            <Image
+              style={styles.bookCoverImg}
+              resizeMode="cover"
+              source={{
+                uri: imageLinks.thumbnail.replace('http:', 'https:'),
+              }}
+            />
+          ) : (
+            <Image
+              style={styles.bookCoverImg}
+              resizeMode="cover"
+              source={{
+                uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png',
+              }}
+            />
+          )}
         </View>
         <View
           style={[
@@ -43,8 +57,8 @@ function BookCard({bookData}: IBookCardProp) {
         />
       </View>
 
-      <Text style={styles.bookTitle}>{bookData.title}</Text>
-      <Text style={styles.bookAuthor}>{bookData.author}</Text>
+      <Text style={styles.bookTitle}>{title}</Text>
+      <Text style={styles.bookAuthor}>{authors}</Text>
     </TouchableOpacity>
   );
 }

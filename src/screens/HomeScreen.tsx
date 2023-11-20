@@ -6,7 +6,7 @@ import {onSnapshot} from 'firebase/firestore';
 import {getListByUserId} from '../services/dbService';
 import {getUserData} from '../store/keychainService';
 
-const BOOK_STATUS = {
+export const BOOK_STATUS = {
   0: 'Currently reading',
   1: 'Have read',
 };
@@ -49,7 +49,12 @@ function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollContainer}>
         {statuses.map((status, index) => (
-          <BookSection status={status} dataList={books} key={index} />
+          <BookSection
+            status={status}
+            dataList={books}
+            key={index}
+            style={styles.scrollContainer}
+          />
         ))}
       </ScrollView>
       <View style={styles.bottomContainer}>
@@ -62,9 +67,6 @@ function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollContainer: {
-    padding: 20,
   },
   bottomContainer: {
     justifyContent: 'flex-end',

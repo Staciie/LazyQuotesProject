@@ -1,14 +1,18 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 function BookSearchCard({bookItem}) {
+  const navigation = useNavigation();
   const {volumeInfo, id} = bookItem;
   let {title, authors, description, pageCount, categories, imageLinks} =
     volumeInfo;
   if (Array.isArray(authors)) authors = authors.join(', ');
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => navigation.navigate('BookModal', {bookItem})}>
       {imageLinks?.thumbnail ? (
         <Image
           style={styles.bookCover}
@@ -62,6 +66,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 20,
     marginRight: 10,
+    alignSelf: 'center',
   },
   titleLabel: {
     flexWrap: 'wrap',

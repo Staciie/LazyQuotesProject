@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, SafeAreaView} from 'react-native';
+import {StyleSheet, Text, SafeAreaView, FlatList, View} from 'react-native';
 import BookSearchCard from '../components/BookSearchCard';
 
 function SearchScreen({route}) {
@@ -31,11 +31,12 @@ function SearchScreen({route}) {
   }
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollContainer}>
-        {bookList.items.map((item) => (
-          <BookSearchCard bookItem={item} />
-        ))}
-      </ScrollView>
+      <View style={styles.scrollContainer}>
+        <FlatList
+          data={bookList.items}
+          renderItem={({item}) => <BookSearchCard bookItem={item} />}
+        />
+      </View>
     </SafeAreaView>
   );
 }
