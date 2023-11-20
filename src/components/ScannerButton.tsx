@@ -3,6 +3,7 @@ import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import BarcodeIcon from '../icons/BarcodeIcon';
 import {getUserData} from '../store/keychainService';
 import {useNavigation} from '@react-navigation/native';
+import colorPallete from '../styles/color';
 
 function ScannerButton() {
   const navigation = useNavigation();
@@ -36,7 +37,7 @@ function ScannerButton() {
   return (
     <TouchableOpacity onPress={onScannerPress}>
       <View style={styles.barcodeContainer}>
-        <BarcodeIcon color="white" />
+        <BarcodeIcon color={colorPallete.secondary} />
       </View>
     </TouchableOpacity>
   );
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
   barcodeContainer: {
     padding: 15,
     borderRadius: 50,
-    backgroundColor: '#4c87e6',
+    backgroundColor: colorPallete.secondary,
   },
 });
 export default ScannerButton;

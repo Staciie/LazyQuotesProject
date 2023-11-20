@@ -11,7 +11,7 @@ const SignOutIcon = (props) => (
       d="M8 12h13m-4 4 4-4-4-4"
       style={{
         fill: 'none',
-        stroke: '#037bfc',
+        stroke: props.color,
         strokeLinecap: 'round',
         strokeLinejoin: 'round',
         strokeWidth: 2,

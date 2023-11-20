@@ -11,8 +11,10 @@ import {
 import {BOOK_STATUS} from './HomeScreen';
 import RadioButtonIcon from '../icons/RadioButtonIcon';
 import PlusIcon from '../icons/PlusIcon';
-import {postBook} from '../services/dbService';
+import {checkIfBookExists, postBook} from '../services/dbService';
 import {getUserData} from '../store/keychainService';
+import colorPallete from '../styles/color';
+import TickIcon from '../icons/TickIcon';
 
 const CustomRadioButton = ({label, selected, onSelect}) => (
   <TouchableOpacity
@@ -21,16 +23,18 @@ const CustomRadioButton = ({label, selected, onSelect}) => (
       styles.radioButtonContainer,
       {
         backgroundColor: selected
-          ? 'rgba(243, 243, 243, 1)'
-          : 'rgba(243, 243, 243, 0.8)',
-        borderColor: selected ? '#146C94' : '#9DB2BF',
+          ? colorPallete.primary + 80
+          : colorPallete.disabled + 50,
+        borderColor: selected ? colorPallete.primary : colorPallete.disabled,
       },
     ]}>
-    {selected && <RadioButtonIcon color="#146C94" style={{marginRight: 10}} />}
+    {selected && (
+      <RadioButtonIcon color={colorPallete.primary} style={{marginRight: 10}} />
+    )}
     <Text
       style={[
         styles.radioButtonLabel,
-        {color: selected ? '#146C94' : '#9DB2BF'},
+        {color: selected ? colorPallete.textSecondary : colorPallete.disabled},
       ]}>
       {label}
     </Text>
@@ -44,12 +48,22 @@ function BookPlayerModal({route}) {
   let {authors, publishedDate} = volumeInfo;
   const [currentStatus, setCurrentStatus] = useState<number>();
   const [userId, setUserId] = useState<string>();
+  const [isAdded, setIsAdded] = useState<boolean>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    getUserData().then(({uid}) => {
-      setUserId(uid);
-    });
-  }, []);
+    if (!userId) {
+      getUserData().then(({uid}) => {
+        setUserId(uid);
+      });
+    } else {
+      checkIfBookExists(userId, id).then((response) => {
+        setIsAdded(response);
+        setIsLoading(false);
+      });
+    }
+  }, [userId]);
+
   const displayMeta = pageCount || language || publishedDate;
 
   if (publishedDate) {
@@ -59,8 +73,15 @@ function BookPlayerModal({route}) {
   }
   if (Array.isArray(authors)) authors = authors.join(', ');
 
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      bounces={false}
+      overScrollMode="never">
       <View style={styles.imageContainer}>
         {imageLinks?.thumbnail ? (
           <Image
@@ -82,7 +103,7 @@ function BookPlayerModal({route}) {
       <View style={styles.textContainer}>
         <View style={styles.titleContainer}>
           <View>
-            {title && <Text style={styles.textLabel}>{title}</Text>}
+            {title && <Text style={styles.titleLabel}>{title}</Text>}
             {authors && <Text style={styles.authLabel}>({authors})</Text>}
           </View>
           <TouchableOpacity
@@ -92,13 +113,22 @@ function BookPlayerModal({route}) {
                 ...route.params.bookItem,
                 status: currentStatus,
               })
+                .then(() => console.log('yeeeah'))
+                .catch(() => console.log('fail'))
             }
             disabled={currentStatus ? false : true}>
-            <PlusIcon
-              color={
-                currentStatus ? 'rgba(32, 94, 97, 1)' : 'rgba(32, 94, 97, 0.3)'
-              }
-            />
+            {!isAdded ? (
+              <PlusIcon
+                backgroudColor={
+                  currentStatus ? 'none' : colorPallete.disabled + 50
+                }
+                color={
+                  currentStatus ? colorPallete.secondary : colorPallete.disabled
+                }
+              />
+            ) : (
+              <TickIcon />
+            )}
           </TouchableOpacity>
         </View>
         <View style={styles.radioButtonsGroup}>
@@ -151,11 +181,13 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-    paddingBottom: 10,
+    paddingBottom: 40,
+    backgroundColor: colorPallete.primary,
   },
   textContainer: {
-    backgroundColor: '#B0926A',
-    flexGrow: 1,
+    backgroundColor: colorPallete.background,
+    position: 'relative',
+    top: -20,
     borderRadius: 20,
     padding: 20,
   },
@@ -164,16 +196,18 @@ const styles = StyleSheet.create({
     width: 160,
     borderRadius: 20,
   },
-  textLabel: {
+  titleLabel: {
     fontFamily: 'Quicksand-Bold',
     fontSize: 20,
+    color: colorPallete.textPrimary,
   },
   authLabel: {
     fontFamily: 'Quicksand-Regular',
     fontSize: 14,
+    color: colorPallete.textPrimary,
   },
   metadataContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: colorPallete.primary + 50,
     borderRadius: 10,
     padding: 10,
     flexDirection: 'row',
@@ -184,15 +218,20 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Bold',
     fontSize: 10,
     textAlign: 'center',
+    color: colorPallete.textPrimary,
   },
-  metaInfoLabel: {fontFamily: 'Quicksand-Regular', fontSize: 10},
+  metaInfoLabel: {
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 10,
+    color: colorPallete.textPrimary,
+  },
   metaColumnContainer: {
     alignItems: 'center',
     width: '30%',
     justifyContent: 'space-between',
   },
   categoryPill: {
-    backgroundColor: '#B2C8BA',
+    backgroundColor: colorPallete.primary + 50,
     paddingHorizontal: 10,
     borderRadius: 50,
     lineHeight: 20,
@@ -204,10 +243,13 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontFamily: 'Quicksand-Regular',
     fontSize: 12,
+    color: colorPallete.textSecondary,
   },
   descLabel: {
     fontFamily: 'Quicksand-Regular',
     fontSize: 14,
+    color: colorPallete.textSecondary,
+    textAlign: 'justify',
   },
   radioButtonsGroup: {
     flexDirection: 'row',

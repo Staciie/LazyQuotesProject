@@ -8,6 +8,8 @@ import {
   View,
 } from 'react-native';
 import {IDataItem} from './BookSection';
+import {useNavigation} from '@react-navigation/native';
+import colorPallete from '../styles/color';
 
 const screenWidth = Dimensions.get('screen').width / 2;
 
@@ -20,7 +22,10 @@ interface IBookCardProp {
 }
 
 function BookCard({bookData}: IBookCardProp) {
-  const onCardPress = () => {};
+  const navigation = useNavigation();
+  const onCardPress = () => {
+    navigation.navigate('BookModal', {bookItem: bookData});
+  };
   const {volumeInfo, id} = bookData;
   let {title, authors, description, pageCount, categories, imageLinks} =
     volumeInfo;
@@ -52,7 +57,7 @@ function BookCard({bookData}: IBookCardProp) {
         <View
           style={[
             styles.backgroundContainer,
-            {backgroundColor: bookData.color},
+            {backgroundColor: colorPallete.primary},
           ]}
         />
       </View>

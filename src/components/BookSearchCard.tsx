@@ -1,6 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import colorPallete from '../styles/color';
 
 function BookSearchCard({bookItem}) {
   const navigation = useNavigation();
@@ -72,10 +73,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     fontFamily: 'Quicksand-Bold',
     fontSize: 16,
+    color: colorPallete.textPrimary,
   },
   authLabel: {
     fontFamily: 'Quicksand-Regular',
     fontSize: 14,
+    color: colorPallete.textPrimary,
   },
   infoContainer: {
     flex: 1,
@@ -83,7 +86,7 @@ const styles = StyleSheet.create({
   },
   categoryPill: {
     marginVertical: 10,
-    backgroundColor: '#B2C8BA',
+    backgroundColor: colorPallete.primary + 60,
     paddingHorizontal: 10,
     borderRadius: 50,
     lineHeight: 20,
@@ -94,15 +97,17 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontFamily: 'Quicksand-Regular',
     fontSize: 12,
+    color: colorPallete.textPrimary,
   },
   descLabel: {
     fontFamily: 'Quicksand-Regular',
     fontSize: 12,
+    color: colorPallete.textSecondary,
   },
   readmoreLabel: {
     marginTop: 5,
     alignSelf: 'flex-end',
-    color: '#435585',
+    color: colorPallete.secondary,
     fontFamily: 'Quicksand-Regular',
     fontSize: 12,
   },

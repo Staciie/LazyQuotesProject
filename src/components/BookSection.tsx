@@ -1,7 +1,6 @@
 import React from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import BookCard from './BookCard';
-import generatePastelColor from '../services/colorGenerator';
 
 const BOOK_STATUS = {
   0: 'Currently reading',
@@ -31,10 +30,7 @@ function BookSection(props: {status: string; dataList: IDataItem[]}) {
         {props.dataList?.map(
           (item) =>
             BOOK_STATUS[item.status] === props.status && (
-              <BookCard
-                bookData={{...item, color: generatePastelColor()}}
-                key={item.id}
-              />
+              <BookCard bookData={item} key={item.id} />
             ),
         )}
       </ScrollView>

@@ -10,6 +10,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import SearchScreen from '../screens/SearchScreen';
 import BookPlayerModal from '../screens/BookPlayerModal';
 import CrossIcon from '../icons/CrossIcon';
+import colorPallete from '../styles/color';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,8 +21,12 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
     <Stack.Navigator
       screenOptions={() => ({
         headerStyle: {
-          backgroundColor: '#EBF3E8',
+          backgroundColor: colorPallete.background,
         },
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+        headerTintColor: colorPallete.textPrimary,
         headerShadowVisible: false,
         headerBackTitleVisible: false,
       })}
@@ -31,10 +36,6 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
           name="Home"
           component={HomeScreen}
           options={({navigation}) => ({
-            headerTintColor: '#037bfc',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
             headerRight: () => (
               <TouchableOpacity
                 onPress={() => {
@@ -49,7 +50,7 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
                       });
                     });
                 }}>
-                <SignOutIcon />
+                <SignOutIcon color={colorPallete.secondary} />
               </TouchableOpacity>
             ),
           })}
@@ -69,12 +70,15 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
           component={BookPlayerModal}
           options={({navigation}) => ({
             headerTitle: '',
+            headerStyle: {
+              backgroundColor: colorPallete.primary,
+            },
             headerRight: () => (
               <TouchableOpacity
                 onPress={() => {
                   navigation.goBack();
                 }}>
-                <CrossIcon />
+                <CrossIcon color={colorPallete.secondary} />
               </TouchableOpacity>
             ),
           })}

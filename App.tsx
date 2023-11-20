@@ -6,12 +6,12 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import {View, Text} from 'react-native';
 import { getUserData, setUserData } from './src/store/keychainService';
+import colorPallete from './src/styles/color';
 
 const MyTheme = {
   ...DefaultTheme,
   colors: {
-    ...DefaultTheme.colors,
-    background: '#EBF3E8',
+    ...colorPallete,
   },
 };
 

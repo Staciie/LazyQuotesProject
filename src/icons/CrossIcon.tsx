@@ -3,8 +3,8 @@ import Svg, {Ellipse, Path} from 'react-native-svg';
 const CrossIcon = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
-    width={24}
-    height={24}
+    width={30}
+    height={30}
     className="icon multi-color"
     viewBox="0 0 24 24"
     {...props}>
@@ -14,7 +14,7 @@ const CrossIcon = (props) => (
       rx={7.5}
       ry={8.88}
       style={{
-        fill: '#037bfc',
+        fill: props.color,
         strokeWidth: 2,
       }}
     />
