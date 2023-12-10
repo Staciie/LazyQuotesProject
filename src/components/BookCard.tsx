@@ -7,21 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {IDataItem} from './BookSection';
 import {useNavigation} from '@react-navigation/native';
 import colorPallete from '../styles/color';
 
 const screenWidth = Dimensions.get('screen').width / 2;
 
-interface IBookCard extends IDataItem {
-  color: string;
-}
-
-interface IBookCardProp {
-  bookData: IBookCard;
-}
-
-function BookCard({bookData}: IBookCardProp) {
+function BookCard({bookData}) {
   const navigation = useNavigation();
   const onCardPress = () => {
     navigation.navigate('BookModal', {bookItem: bookData});
@@ -72,6 +63,7 @@ const styles = StyleSheet.create({
   bookCardContainer: {
     width: screenWidth,
     alignItems: 'center',
+    padding: 10,
   },
   coverWithBackContainer: {
     alignItems: 'center',
@@ -80,7 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     bottom: 0,
-    width: '90%',
+    width: '100%',
     height: 150,
     zIndex: -1,
     borderRadius: 20,
@@ -103,7 +95,7 @@ const styles = StyleSheet.create({
   },
   bookTitle: {
     fontFamily: 'Quicksand-Bold',
-    fontSize: 20,
+    fontSize: 14,
     marginTop: 5,
     textAlign: 'center',
   },

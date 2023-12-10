@@ -8,21 +8,38 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {BOOK_STATUS} from './HomeScreen';
 import {checkIfBookExists, deleteBook, postBook} from '../services/dbService';
 import {getUserData} from '../store/keychainService';
 import colorPallete from '../styles/color';
-import CustomRadioButton from '../components/CustomRadioButton';
+import {useNavigation} from '@react-navigation/native';
+import FilledHeartIcon from '../icons/FilledHeartIcon';
+import EmptyHeartIcon from '../icons/EmptyHeartIcon';
 
 function BookPlayerModal({route}) {
+  const navigation = useNavigation();
   const {volumeInfo, id} = route.params.bookItem;
   const {title, description, pageCount, categories, imageLinks, language} =
     volumeInfo;
   let {authors, publishedDate} = volumeInfo;
-  const [currentStatus, setCurrentStatus] = useState<number>();
   const [userId, setUserId] = useState<string>();
   const [isAdded, setIsAdded] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const onPress = () => {
+    !isAdded
+      ? postBook(
+          userId,
+          {
+            ...route.params.bookItem,
+          },
+          2,
+        )
+          .then(() => setIsAdded(!isAdded))
+          .catch((e) => console.log(e))
+      : deleteBook(userId, route.params.bookItem.id)
+          .then(() => setIsAdded(!isAdded))
+          .catch(() => console.log('something went wrong'));
+  };
 
   useEffect(() => {
     if (!userId) {
@@ -32,7 +49,7 @@ function BookPlayerModal({route}) {
     } else {
       checkIfBookExists(userId, id).then((response) => {
         if (response) {
-          setCurrentStatus(response.status);
+          console.log(response);
           setIsAdded(true);
         } else {
           setIsAdded(false);
@@ -42,20 +59,21 @@ function BookPlayerModal({route}) {
     }
   }, [userId]);
 
-  const displayMeta = pageCount || language || publishedDate;
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity style={styles.saveButtonContainer} onPress={onPress}>
+          {isAdded ? (
+            <FilledHeartIcon color={colorPallete.secondary} />
+          ) : (
+            <EmptyHeartIcon color={colorPallete.secondary} />
+          )}
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, isAdded]);
 
-  const onPress = () => {
-    !isAdded
-      ? postBook(userId, {
-          ...route.params.bookItem,
-          status: currentStatus,
-        })
-          .then(() => setIsAdded(!isAdded))
-          .catch(() => console.log('something went wrong'))
-      : deleteBook(userId, route.params.bookItem.id)
-          .then(() => setIsAdded(!isAdded))
-          .catch(() => console.log('something went wrong'));
-  };
+  const displayMeta = pageCount || language || publishedDate;
 
   if (publishedDate) {
     publishedDate = moment(publishedDate, 'YYYY', true).isValid()
@@ -98,42 +116,8 @@ function BookPlayerModal({route}) {
             {title && <Text style={styles.titleLabel}>{title}</Text>}
             {authors && <Text style={styles.authLabel}>({authors})</Text>}
           </View>
-          <TouchableOpacity
-            style={styles.saveButtonContainer}
-            onPress={onPress}
-            disabled={currentStatus ? false : true}>
-            <View
-              style={[
-                styles.saveButton,
-                !currentStatus
-                  ? {
-                      backgroundColor: colorPallete.disabled + 80,
-                      borderColor: colorPallete.disabled,
-                    }
-                  : {
-                      backgroundColor: colorPallete.secondary + 50,
-                      borderColor: colorPallete.secondary,
-                    },
-              ]}>
-              {!isAdded ? (
-                <Text
-                  style={[
-                    styles.saveButtonLabel,
-                    !currentStatus
-                      ? {
-                          color: colorPallete.disabled,
-                        }
-                      : {color: colorPallete.secondary},
-                  ]}>
-                  Add
-                </Text>
-              ) : (
-                <Text style={styles.saveButtonLabel}>Remove</Text>
-              )}
-            </View>
-          </TouchableOpacity>
         </View>
-        <View style={styles.radioButtonsGroup}>
+        {/* <View style={styles.radioButtonsGroup}>
           {Object.keys(BOOK_STATUS).map((status) => (
             <CustomRadioButton
               disabled={isAdded}
@@ -142,7 +126,7 @@ function BookPlayerModal({route}) {
               onSelect={() => setCurrentStatus(status)}
             />
           ))}
-        </View>
+        </View> */}
 
         {categories &&
           categories.map((category) => (
@@ -266,8 +250,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   saveButtonContainer: {
-    flexGrow: 1,
-    flex: 1,
     alignItems: 'flex-end',
   },
   saveButton: {

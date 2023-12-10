@@ -22,7 +22,7 @@ function SignInScreen({navigation}: any) {
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       // Sign-in the user with the credential
       const user = await auth().signInWithCredential(googleCredential);
-      setUserData(user);
+      await setUserData(user);
       navigation.reset({
         index: 0,
         routes: [{name: 'Home', params: {user: user.user}}],
