@@ -8,15 +8,17 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {checkIfBookExists, deleteBook, postBook} from '../services/dbService';
-import {getUserData} from '../store/keychainService';
+import {deleteBook, postBook} from '../services/dbService';
+import {getUserData} from '../services/keychainService';
 import colorPallete from '../styles/color';
 import {useNavigation} from '@react-navigation/native';
 import FilledHeartIcon from '../icons/FilledHeartIcon';
 import EmptyHeartIcon from '../icons/EmptyHeartIcon';
+import {useStore} from '../store';
 
 function BookPlayerModal({route}) {
   const navigation = useNavigation();
+  const {booksList} = useStore();
   const {volumeInfo, id} = route.params.bookItem;
   const {title, description, pageCount, categories, imageLinks, language} =
     volumeInfo;
@@ -27,14 +29,12 @@ function BookPlayerModal({route}) {
 
   const onPress = () => {
     !isAdded
-      ? postBook(
-          userId,
-          {
-            ...route.params.bookItem,
-          },
-          2,
-        )
-          .then(() => setIsAdded(!isAdded))
+      ? postBook(userId, {
+          ...route.params.bookItem,
+        })
+          .then(() => {
+            setIsAdded(!isAdded);
+          })
           .catch((e) => console.log(e))
       : deleteBook(userId, route.params.bookItem.id)
           .then(() => setIsAdded(!isAdded))
@@ -47,14 +47,8 @@ function BookPlayerModal({route}) {
         setUserId(uid);
       });
     } else {
-      checkIfBookExists(userId, id).then((response) => {
-        if (response) {
-          console.log(response);
-          setIsAdded(true);
-        } else {
-          setIsAdded(false);
-        }
-      });
+      const isInTheList = booksList.findById(id);
+      setIsAdded(isInTheList);
       setIsLoading(false);
     }
   }, [userId]);
@@ -82,7 +76,7 @@ function BookPlayerModal({route}) {
   }
 
   if (Array.isArray(authors)) authors = authors.join(', ');
-
+  console.log(pageCount);
   if (isLoading) {
     return <Text>Loading...</Text>;
   }
@@ -126,9 +120,8 @@ function BookPlayerModal({route}) {
               onSelect={() => setCurrentStatus(status)}
             />
           ))}
-        </View> */}
-
-        {categories &&
+        </View>  */}
+        {!!categories &&
           categories.map((category) => (
             <View style={styles.categoryPill}>
               <Text style={styles.categoryLabel}>{category}</Text>
@@ -136,19 +129,19 @@ function BookPlayerModal({route}) {
           ))}
         {displayMeta && (
           <View style={styles.metadataContainer}>
-            {pageCount && (
+            {!!pageCount && (
               <View style={styles.metaColumnContainer}>
                 <Text style={styles.metaTitleLabel}>Number of pages</Text>
                 <Text style={styles.metaInfoLabel}>{pageCount} pages</Text>
               </View>
             )}
-            {language && (
+            {!!language && (
               <View style={styles.metaColumnContainer}>
                 <Text style={styles.metaTitleLabel}>Language</Text>
                 <Text style={styles.metaInfoLabel}>{language}</Text>
               </View>
             )}
-            {publishedDate && (
+            {!!publishedDate && (
               <View style={styles.metaColumnContainer}>
                 <Text style={styles.metaTitleLabel}>Publish</Text>
                 <Text style={styles.metaInfoLabel}>{publishedDate}</Text>
@@ -156,7 +149,7 @@ function BookPlayerModal({route}) {
             )}
           </View>
         )}
-        {description && <Text style={styles.descLabel}>{description}</Text>}
+        {!!description && <Text style={styles.descLabel}>{description}</Text>}
       </View>
     </ScrollView>
   );

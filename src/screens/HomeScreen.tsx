@@ -9,20 +9,20 @@ import {
 } from 'react-native';
 import BookSection from '../components/BookSection';
 import ScannerButton, {InputDialog} from '../components/ScannerButton';
-import {onSnapshot} from 'firebase/firestore';
-import {getListByUserId} from '../services/dbService';
-import {changeName, getUserData} from '../store/keychainService';
+import {changeName, getUserData} from '../services/keychainService';
 import colorPallete from '../styles/color';
 import {useNavigation} from '@react-navigation/native';
+import {useStore} from '../store';
+import {observer} from 'mobx-react';
 
 export const BOOK_STATUS = {
   0: 'Currently reading',
   1: 'Have read',
 };
 
-function HomeScreen() {
+const HomeScreen = observer(() => {
   const navigation = useNavigation();
-  const [books, setBooks] = useState();
+  const {booksList} = useStore();
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string>();
   const [username, setUsername] = useState<string>();
@@ -31,22 +31,11 @@ function HomeScreen() {
   const subscriber = () => {
     if (!userId) {
       getUserData().then(({uid, username}) => {
-        console.log(uid, username);
         setUserId(uid);
         setUsername(username);
       });
     } else {
-      const listRef = getListByUserId(userId);
-      onSnapshot(listRef, {
-        next: (snapshot) => {
-          const bookList: any[] = [];
-          snapshot.docs.forEach((doc) => {
-            bookList.push({id: doc.id, ...doc.data()});
-          });
-          setBooks(bookList);
-          setLoading(false);
-        },
-      });
+      booksList.updateBookList(userId, setLoading);
     }
   };
 
@@ -59,7 +48,6 @@ function HomeScreen() {
     setPromptVisible(true);
   };
   const handleCancel = () => {
-    console.log('Cancel Pressed');
     setPromptVisible(false);
   };
   const handleSearch = (query) => {
@@ -107,8 +95,8 @@ function HomeScreen() {
             </Text>
           </Text>
         </View>
-        {books.length ? (
-          <BookSection dataList={books} />
+        {booksList.bookList.length ? (
+          <BookSection dataList={booksList.bookList} />
         ) : (
           <Text style={styles.emptyListLabel}>
             Start adding books to create your reading collection!
@@ -120,7 +108,7 @@ function HomeScreen() {
       </View>
     </SafeAreaView>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

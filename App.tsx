@@ -5,8 +5,9 @@ import RootNavigation from './src/navigation/RootNavigation';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import {View, Text} from 'react-native';
-import { getUserData, setUserData } from './src/store/keychainService';
+import { getUserData, setUserData } from './src/services/keychainService';
 import colorPallete from './src/styles/color';
+import { StoreProvider, rootStore } from './src/store';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -45,9 +46,11 @@ function App(): JSX.Element {
   }
 
   return (
+    <StoreProvider value={rootStore}>
     <NavigationContainer theme={MyTheme}>
       <RootNavigation hasSignedIn={signedIn}/>
     </NavigationContainer>
+    </StoreProvider>
   );
 }
 

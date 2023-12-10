@@ -5,12 +5,11 @@ import SignInScreen from '../screens/SignInScreen';
 import SignOutIcon from '../icons/SignOutIcon';
 import auth from '@react-native-firebase/auth';
 import {TouchableOpacity} from 'react-native';
-import {resetGenericPassword} from 'react-native-keychain';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import SearchScreen from '../screens/SearchScreen';
 import BookPlayerModal from '../screens/BookPlayerScreen';
 import colorPallete from '../styles/color';
-import {resetUserData} from '../store/keychainService';
+import {resetUserData} from '../services/keychainService';
 
 const Stack = createNativeStackNavigator();
 

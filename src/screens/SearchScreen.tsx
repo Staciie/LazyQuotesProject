@@ -17,15 +17,9 @@ function SearchScreen({route}) {
       .then((result) => {
         setBookList(result.data);
         setLoading(false);
-        // const dataToSend = processFetchedBookData(result);
-        // postBook(uid, dataToSend);
       })
       .catch((error) => console.log(error));
   }, [query]);
-
-  if (!loading) {
-    console.log(bookList.items[0]);
-  }
   if (loading) {
     return <Text>Loading ...</Text>;
   }

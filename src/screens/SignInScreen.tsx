@@ -12,7 +12,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import GoogleIcon from '../icons/GoogleIcon';
-import {setUserData} from '../store/keychainService';
+import {setUserData} from '../services/keychainService';
 
 function SignInScreen({navigation}: any) {
   // should save somewhere
