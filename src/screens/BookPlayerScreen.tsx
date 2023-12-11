@@ -76,7 +76,6 @@ function BookPlayerModal({route}) {
   }
 
   if (Array.isArray(authors)) authors = authors.join(', ');
-  console.log(pageCount);
   if (isLoading) {
     return <Text>Loading...</Text>;
   }

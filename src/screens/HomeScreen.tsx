@@ -14,6 +14,9 @@ import colorPallete from '../styles/color';
 import {useNavigation} from '@react-navigation/native';
 import {useStore} from '../store';
 import {observer} from 'mobx-react';
+import {
+  useCameraDevice,
+} from 'react-native-vision-camera';
 
 export const BOOK_STATUS = {
   0: 'Currently reading',
@@ -27,6 +30,7 @@ const HomeScreen = observer(() => {
   const [userId, setUserId] = useState<string>();
   const [username, setUsername] = useState<string>();
   const [promptVisible, setPromptVisible] = useState<boolean>(false);
+  const device = useCameraDevice('back');
 
   const subscriber = () => {
     if (!userId) {
@@ -45,8 +49,9 @@ const HomeScreen = observer(() => {
   }, [userId]);
 
   const onScannerPress = () => {
-    setPromptVisible(true);
+    navigation.navigate('CameraScaner', {device: device});
   };
+
   const handleCancel = () => {
     setPromptVisible(false);
   };

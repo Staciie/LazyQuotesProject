@@ -10,6 +10,7 @@ import SearchScreen from '../screens/SearchScreen';
 import BookPlayerModal from '../screens/BookPlayerScreen';
 import colorPallete from '../styles/color';
 import {resetUserData} from '../services/keychainService';
+import CameraScanerScreen from '../screens/CameraScanerScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -67,6 +68,10 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
             backgroundColor: colorPallete.primary,
           },
         })}
+      />
+      <Stack.Screen
+        name="CameraScaner"
+        component={CameraScanerScreen}
       />
     </Stack.Navigator>
   );
