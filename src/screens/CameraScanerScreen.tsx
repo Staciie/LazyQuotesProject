@@ -1,13 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Linking,
-  StyleSheet,
-  View,
-} from 'react-native';
-import {
-  Camera,
-  useCodeScanner,
-} from 'react-native-vision-camera';
+import {Linking, StyleSheet, View} from 'react-native';
+import {Camera, useCodeScanner} from 'react-native-vision-camera';
 import colorPallete from '../styles/color';
 import {useNavigation} from '@react-navigation/native';
 
@@ -54,7 +47,7 @@ function CameraScanerScreen({route}) {
   const codeScanner = useCodeScanner({
     codeTypes: ['ean-13'],
     onCodeScanned: (codes) => {
-      navigation.navigate('Search', {query: codes[0].value});
+    navigation.navigate('Search', {query: codes[0].value});
     },
   });
 
