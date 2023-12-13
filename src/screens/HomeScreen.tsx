@@ -8,15 +8,13 @@ import {
   View,
 } from 'react-native';
 import BookSection from '../components/BookSection';
-import ScannerButton, {InputDialog} from '../components/ScannerButton';
+import {ScannerButton} from '../components/ScannerButton';
 import {changeName, getUserData} from '../services/keychainService';
 import colorPallete from '../styles/color';
 import {useNavigation} from '@react-navigation/native';
 import {useStore} from '../store';
 import {observer} from 'mobx-react';
-import {
-  useCameraDevice,
-} from 'react-native-vision-camera';
+import {useCameraDevice} from 'react-native-vision-camera';
 
 export const BOOK_STATUS = {
   0: 'Currently reading',
@@ -25,11 +23,9 @@ export const BOOK_STATUS = {
 
 const HomeScreen = observer(() => {
   const navigation = useNavigation();
-  const {booksList} = useStore();
-  const [loading, setLoading] = useState(true);
+  const {booksListStore} = useStore();
   const [userId, setUserId] = useState<string>();
   const [username, setUsername] = useState<string>();
-  const [promptVisible, setPromptVisible] = useState<boolean>(false);
   const device = useCameraDevice('back');
 
   const subscriber = () => {
@@ -39,7 +35,7 @@ const HomeScreen = observer(() => {
         setUsername(username);
       });
     } else {
-      booksList.updateBookList(userId, setLoading);
+      booksListStore.updateBookList(userId);
     }
   };
 
@@ -52,25 +48,12 @@ const HomeScreen = observer(() => {
     navigation.navigate('CameraScaner', {device: device});
   };
 
-  const handleCancel = () => {
-    setPromptVisible(false);
-  };
-  const handleSearch = (query) => {
-    navigation.navigate('Search', {query: query});
-    setPromptVisible(false);
-  };
-
-  if (loading) {
+  if (booksListStore.loading) {
     return <Text>Loading ...</Text>;
   }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <InputDialog
-          visible={promptVisible}
-          handleCancel={handleCancel}
-          handleSearch={handleSearch}
-        />
         <View style={styles.greetingsContainer}>
           <Text style={styles.greetingsLabel}>
             Hello, {'\n'}
@@ -100,8 +83,8 @@ const HomeScreen = observer(() => {
             </Text>
           </Text>
         </View>
-        {booksList.bookList.length ? (
-          <BookSection dataList={booksList.bookList} />
+        {!booksListStore.isBookEmpty() ? (
+          <BookSection dataList={booksListStore.bookList} />
         ) : (
           <Text style={styles.emptyListLabel}>
             Start adding books to create your reading collection!

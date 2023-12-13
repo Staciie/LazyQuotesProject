@@ -1,97 +1,52 @@
-import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
   SafeAreaView,
   FlatList,
   View,
-  Alert,
   TextInput,
 } from 'react-native';
 import BookSearchCard from '../components/BookSearchCard';
 import {useNavigation} from '@react-navigation/native';
 import colorPallete from '../styles/color';
+import {useStore} from '../store';
+import {observer} from 'mobx-react';
 
-function SearchScreen({route}) {
+const SearchScreen = observer(() => {
   const navigation = useNavigation();
-  const [codeQuery, setCodeQuery] = useState<string>(route.params.query);
-  const [bookList, setBookList] = useState<any[]>();
-  const [textQuery, onChangeTextQuery] = React.useState('');
-  const [loading, setLoading] = useState<boolean>(true);
-  const [index, setIndex] = useState<number>(0);
+  const {searchStore} = useStore();
 
-  useEffect(() => {
-    axios
-      .get(
-        `https://www.googleapis.com/books/v1/volumes?q=isbn:${codeQuery}&maxResults=30&startIndex=${index}`,
-      )
-      .then((result) => {
-        if (result.data.totalItems) {
-          setBookList(result.data);
-          setLoading(false);
-        } else {
-          Alert.alert(
-            'Sorry!',
-            'We couldn`t find the book with this ISBN, try to search it by title or author',
-            [
-              {
-                text: 'Go back',
-                onPress: () => navigation.goBack(),
-                style: 'cancel',
-              },
-              {
-                text: 'OK',
-                onPress: () => {
-                  setLoading(false);
-                },
-              },
-            ],
-          );
-        }
-      })
-      .catch((error) => console.log(error));
-  }, [codeQuery]);
-
-  useEffect(() => {
-    axios
-      .get(
-        `https://www.googleapis.com/books/v1/volumes?q=${textQuery}&maxResults=30&startIndex=${index}`,
-      )
-      .then((result) => {
-        if (result.data.totalItems) {
-          setCodeQuery('');
-          setBookList(result.data);
-          setLoading(false);
-        }
-      })
-      .catch((error) => console.log(error));
-  }, [textQuery]);
-
-
-  if (loading) {
-    return <Text>Loading ...</Text>;
-  }
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.scrollContainer}>
         <TextInput
           style={styles.input}
-          onChangeText={onChangeTextQuery}
-          value={textQuery}
-          placeholder="Search by title or author..."
+          onChangeText={(query) => {
+            searchStore.performSearch(query, navigation);
+          }}
+          value={searchStore.searchQuery}
+          placeholder="Search by..."
           placeholderTextColor={colorPallete.disabledText}
         />
-        {bookList && (textQuery || codeQuery) && (
+        {!searchStore.searchQuery ? (
+          <Text style={styles.warningMessage}>
+            Enter title, author name or ISBN code
+          </Text>
+        ) : searchStore.totalNumber === 0 ? (
+          <Text style={styles.warningMessage}>
+            Sorry, nothing matched the query you entered :(
+          </Text>
+        ) : (
           <FlatList
-            data={bookList?.items}
+            data={searchStore.searchResults?.items}
             renderItem={({item}) => <BookSearchCard bookItem={item} />}
           />
         )}
       </View>
     </SafeAreaView>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -107,6 +62,10 @@ const styles = StyleSheet.create({
     borderColor: colorPallete.primary,
     borderRadius: 10,
     padding: 10,
+  },
+  warningMessage: {
+    marginTop: 10,
+    fontFamily: 'Quicksand-Bold',
   },
 });
 

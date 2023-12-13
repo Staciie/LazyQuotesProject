@@ -1,33 +1,10 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import BarcodeIcon from '../icons/BarcodeIcon';
-import {useNavigation} from '@react-navigation/native';
 import colorPallete from '../styles/color';
-import Dialog from 'react-native-dialog';
 
-export function InputDialog({visible, handleCancel, handleSearch}) {
-  const [query, setQuery] = useState<string>();
-  return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-      <Dialog.Container visible={visible}>
-        <Dialog.Title>Search for</Dialog.Title>
-        <Dialog.Input onChangeText={(text) => setQuery(text)} />
-        <Dialog.Button label="Cancel" onPress={handleCancel} />
-        <Dialog.Button label="Search" onPress={() => handleSearch(query)} />
-      </Dialog.Container>
-    </View>
-  );
-}
 
-function ScannerButton(props) {
-  const navigation = useNavigation();
-
+export function ScannerButton(props) {
   return (
     <TouchableOpacity onPress={props.onScannerPress}>
       <View style={styles.barcodeContainer}>
@@ -44,4 +21,3 @@ const styles = StyleSheet.create({
     backgroundColor: colorPallete.secondary,
   },
 });
-export default ScannerButton;

@@ -1,11 +1,14 @@
 import {createContext, useContext} from 'react';
 import {BookListStore} from './booksStore';
+import { SearchResultsStore } from './searchStore';
 
 export class RootStore {
-  booksList: BookListStore;
+  booksListStore: BookListStore;
+  searchStore: SearchResultsStore;
 
   constructor() {
-    this.booksList = new BookListStore();
+    this.booksListStore = new BookListStore();
+    this.searchStore = new SearchResultsStore();
   }
 }
 

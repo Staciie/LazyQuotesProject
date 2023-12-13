@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Linking, StyleSheet, View} from 'react-native';
 import {Camera, useCodeScanner} from 'react-native-vision-camera';
-import colorPallete from '../styles/color';
 import {useNavigation} from '@react-navigation/native';
+import {useStore} from '../store';
+import {InputDialog} from '../components/InputDialog';
+import {observer} from 'mobx-react';
 
 const CAMERA_PERMISSION = {
   GRANTED: 'granted',
@@ -11,10 +13,33 @@ const CAMERA_PERMISSION = {
   RESTRICTED: 'restricted',
 };
 
-function CameraScanerScreen({route}) {
+const CameraScanerScreen = observer(({route}) => {
   const {device} = route.params;
+  const {searchStore} = useStore();
   const [cameraPermission, setCameraPermission] = useState<boolean>(false);
+  const [cameraActive, setCameraActive] = useState(true);
   const navigation = useNavigation();
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setCameraActive(true);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    checkCameraPermission();
+  }, []);
+
+  const handleCancel = () => {
+    setCameraActive(true);
+    searchStore.setPromptVisible(false);
+  };
+  
+  const handleSearch = (query: string) => {
+    searchStore.performSearch(query, navigation);
+    searchStore.setPromptVisible(false);
+  };
 
   const checkCameraPermission = async () => {
     const cameraPermissionStatus = await Camera.getCameraPermissionStatus();
@@ -40,14 +65,14 @@ function CameraScanerScreen({route}) {
       }
     }
   };
-  useEffect(() => {
-    checkCameraPermission();
-  }, []);
 
   const codeScanner = useCodeScanner({
     codeTypes: ['ean-13'],
     onCodeScanned: (codes) => {
-    navigation.navigate('Search', {query: codes[0].value});
+      if (codes.length > 0) {
+        setCameraActive(false);
+        searchStore.performSearch(codes[0].value, navigation);
+      }
     },
   });
 
@@ -57,27 +82,22 @@ function CameraScanerScreen({route}) {
         <Camera
           style={StyleSheet.absoluteFill}
           device={device}
-          isActive={true}
+          isActive={cameraActive}
           codeScanner={codeScanner}
+          // implement torch button
+          torch={'off'}
         />
-        {/* <TouchableOpacity style={styles.shotButton} /> */}
+        <InputDialog
+          visible={searchStore.promptVisible}
+          handleCancel={handleCancel}
+          handleSearch={handleSearch}
+        />
       </View>
     )
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  shotButton: {
-    position: 'absolute',
-    bottom: 100,
-    width: 70,
-    height: 70,
-    borderWidth: 5,
-    borderColor: colorPallete.disabledText,
-    alignSelf: 'center',
-    borderRadius: 50,
-    zIndex: 2,
-  },
 });
 export default CameraScanerScreen;

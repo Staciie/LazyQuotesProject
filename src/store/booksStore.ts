@@ -5,13 +5,15 @@ import {onSnapshot} from 'firebase/firestore';
 
 export class BookListStore {
   bookList: unknown[] = [];
+  loading: boolean = true;
   constructor() {
     makeAutoObservable(this, {
       setList: action,
+      setLoading: action,
     });
   }
 
-  updateBookList(userId: string, setLoading) {
+  updateBookList(userId: string) {
     const listRef = getListByUserId(userId);
     onSnapshot(listRef, {
       next: (snapshot) => {
@@ -20,19 +22,24 @@ export class BookListStore {
           bookList.push({id: doc.id, ...doc.data()});
         });
         this.setList(bookList);
-        setLoading(false);
+        this.setLoading(false);
       },
     });
   }
 
+  setLoading(state) {
+    this.loading = state;
+  }
   setList(list) {
     this.bookList = list;
   }
   findById(id: string) {
     return this.bookList.some((item) => item.id === id);
   }
-
   resetBookList() {
     this.bookList = [];
+  }
+  isBookEmpty() {
+    return this.bookList.length === 0;
   }
 }

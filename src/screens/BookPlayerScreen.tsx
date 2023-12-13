@@ -18,7 +18,7 @@ import {useStore} from '../store';
 
 function BookPlayerModal({route}) {
   const navigation = useNavigation();
-  const {booksList} = useStore();
+  const {booksListStore} = useStore();
   const {volumeInfo, id} = route.params.bookItem;
   const {title, description, pageCount, categories, imageLinks, language} =
     volumeInfo;
@@ -47,7 +47,7 @@ function BookPlayerModal({route}) {
         setUserId(uid);
       });
     } else {
-      const isInTheList = booksList.findById(id);
+      const isInTheList = booksListStore.findById(id);
       setIsAdded(isInTheList);
       setIsLoading(false);
     }
