@@ -4,9 +4,9 @@ import Svg, {Path} from 'react-native-svg';
 const PlusIcon = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
-    width={40}
-    height={40}
-    fill={props.backgroudColor}
+    width={props.size}
+    height={props.size}
+    fill="transparent"
     viewBox="0 0 24 24"
     {...props}>
     <Path

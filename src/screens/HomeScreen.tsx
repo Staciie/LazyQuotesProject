@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -74,7 +73,6 @@ const HomeScreen = observer(() => {
         <InputDialog
           visible={visible}
           handleSearch={(text) => {
-            console.log(text);
             changeName(text).then(() => setUsername(text));
             setVisible(false);
           }}

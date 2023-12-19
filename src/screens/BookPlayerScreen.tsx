@@ -15,17 +15,30 @@ import {useNavigation} from '@react-navigation/native';
 import FilledHeartIcon from '../icons/FilledHeartIcon';
 import EmptyHeartIcon from '../icons/EmptyHeartIcon';
 import {useStore} from '../store';
+import PlusIcon from '../icons/PlusIcon';
+import {InputDialog} from '../components/InputDialog';
 
 function BookPlayerModal({route}) {
   const navigation = useNavigation();
   const {booksListStore} = useStore();
-  const {volumeInfo, id} = route.params.bookItem;
+  const bookData = booksListStore.findBookById(route.params.bookItem.id);
+  const {volumeInfo, id, quoteList} = bookData;
   const {title, description, pageCount, categories, imageLinks, language} =
     volumeInfo;
   let {authors, publishedDate} = volumeInfo;
   const [userId, setUserId] = useState<string>();
   const [isAdded, setIsAdded] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [visible, setVisible] = useState<boolean>(false);
+
+  const handleSearch = (query) => {
+    booksListStore.postQuote(
+      {title: query, page: 43},
+      route.params.bookItem.id,
+      userId,
+    );
+    setVisible(false);
+  };
 
   const onPress = () => {
     !isAdded
@@ -47,7 +60,7 @@ function BookPlayerModal({route}) {
         setUserId(uid);
       });
     } else {
-      const isInTheList = booksListStore.findById(id);
+      const isInTheList = booksListStore.checkById(id);
       setIsAdded(isInTheList);
       setIsLoading(false);
     }
@@ -81,10 +94,12 @@ function BookPlayerModal({route}) {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      bounces={false}
-      overScrollMode="never">
+    <ScrollView bounces={false} overScrollMode="never">
+      <InputDialog
+        visible={visible}
+        handleSearch={handleSearch}
+        handleCancel={() => setVisible(false)}
+      />
       <View style={styles.imageContainer}>
         {imageLinks?.thumbnail ? (
           <Image
@@ -105,7 +120,7 @@ function BookPlayerModal({route}) {
 
       <View style={styles.textContainer}>
         <View style={styles.titleContainer}>
-          <View style={styles.titleTextGroup}>
+          <View>
             {title && <Text style={styles.titleLabel}>{title}</Text>}
             {authors && <Text style={styles.authLabel}>({authors})</Text>}
           </View>
@@ -148,16 +163,24 @@ function BookPlayerModal({route}) {
             )}
           </View>
         )}
-        {!!description && <Text style={styles.descLabel}>{description}</Text>}
+        {!!description && (
+          <Text style={styles.descLabel} numberOfLines={10}>
+            {description}
+          </Text>
+        )}
+        <View style={styles.quotesSection}>
+          <Text style={styles.quotesSectionLabel}>Saved quotes</Text>
+          <TouchableOpacity onPress={() => setVisible(true)}>
+            <PlusIcon color={colorPallete.secondary} size={30} />
+          </TouchableOpacity>
+        </View>
+        {quoteList && quoteList.map((item) => <Text>{item.title}</Text>)}
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-  },
   imageContainer: {
     alignItems: 'center',
     paddingBottom: 40,
@@ -231,15 +254,10 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
   },
   titleContainer: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
-  },
-  titleTextGroup: {
-    flexGrow: 3,
-    flex: 1,
   },
   saveButtonContainer: {
     alignItems: 'flex-end',
@@ -257,6 +275,17 @@ const styles = StyleSheet.create({
   radioButtonsGroup: {
     flexDirection: 'row',
     marginBottom: 10,
+  },
+  quotesSectionLabel: {
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    color: colorPallete.textSecondary,
+  },
+  quotesSection: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

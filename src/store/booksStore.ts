@@ -1,6 +1,5 @@
-import React from 'react';
 import {action, makeAutoObservable} from 'mobx';
-import {getListByUserId} from '../services/dbService';
+import {getListByUserId, postQuote} from '../services/dbService';
 import {onSnapshot} from 'firebase/firestore';
 
 export class BookListStore {
@@ -33,9 +32,31 @@ export class BookListStore {
   setList(list) {
     this.bookList = list;
   }
-  findById(id: string) {
+  checkById(id: string) {
     return this.bookList.some((item) => item.id === id);
   }
+
+  findBookById(id: string) {
+    return this.bookList.find((item) => item.id === id);
+  }
+
+  postQuote(quoteObject, bookId, userId) {
+    const bookData = this.findBookById(bookId);
+    let refList;
+    if (bookData.hasOwnProperty('quoteList')) {
+      refList = bookData.quoteList;
+      refList.push({
+        ...quoteObject,
+        id: 'id' + Math.random().toString(16).slice(2),
+      });
+    } else {
+      refList = [
+        {...quoteObject, id: 'id' + Math.random().toString(16).slice(2)},
+      ];
+    }
+    postQuote(userId, bookId, refList);
+  }
+
   resetBookList() {
     this.bookList = [];
   }

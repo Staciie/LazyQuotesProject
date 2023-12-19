@@ -1,4 +1,10 @@
-import {collection, deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 import {db} from '../config/firebaseConfig';
 
 export const getListByUserId = (userId: string) => {
@@ -13,16 +19,17 @@ export const postBook = async (userId: string, bookData: any) => {
   await setDoc(doc(listRef, bookData.id), bookData);
 };
 
-export const checkIfBookExists = async (userId: string, bookId: string) => {
+const getBookRef = (userId: string, bookId: string) => {
   const listRef = getListByUserId(userId);
   const bookRef = doc(listRef, bookId);
-  const bookSnap = await getDoc(bookRef);
+  return bookRef;
+};
 
-  if (bookSnap.exists()) {
-    return bookSnap.data();
-  } else {
-    return false;
-  }
+export const postQuote = async (userId, bookId, refList) => {
+  const bookRef = getBookRef(userId, bookId);
+  await updateDoc(bookRef, {
+    quoteList: refList,
+  });
 };
 
 export const deleteBook = async (userId: string, bookId: string) => {
