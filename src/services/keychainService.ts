@@ -8,15 +8,19 @@ import {
 } from 'react-native-keychain';
 
 export const setUserData = async (data: any) => {
-  const userName = data.additionalUserInfo?.given_name || data.user.displayName;
-
-  const wasSaved = await hasInternetCredentials(data.user.uid);
-  if (wasSaved) {
-    const {username, server} = await getInternetCredentials(data.user.uid);
-    await setGenericPassword(username, server);
-  } else {
-    await setInternetCredentials(data.user.uid, userName, data.user.email);
-    await setGenericPassword(userName, data.user.uid);
+  if (data !== null) {
+    const userName =
+      data.additionalUserInfo?.given_name || data.user.displayName;
+    const wasSaved = await hasInternetCredentials(data.user.uid);
+    if (wasSaved) {
+      const {username, service} = await getInternetCredentials(data.user.uid);
+      // fix edgecase when user was added befor
+      await setInternetCredentials(data?.user.uid, userName, data?.user.email);
+      await setGenericPassword(username, data.user.uid);
+    } else {
+      await setInternetCredentials(data?.user.uid, userName, data?.user.email);
+      await setGenericPassword(userName, data?.user.uid);
+    }
   }
 };
 
@@ -27,7 +31,7 @@ export const getUserData = async () => {
 
 export const changeName = async (name: string) => {
   const {uid} = await getUserData();
-  const {password} = await getInternetCredentials(uid);
+  const {username, service, password} = await getInternetCredentials(uid);
   await setInternetCredentials(uid, name, password);
   await setGenericPassword(name, uid);
 };

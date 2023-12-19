@@ -15,6 +15,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useStore} from '../store';
 import {observer} from 'mobx-react';
 import {useCameraDevice} from 'react-native-vision-camera';
+import {InputDialog} from '../components/InputDialog';
 
 export const BOOK_STATUS = {
   0: 'Currently reading',
@@ -26,6 +27,7 @@ const HomeScreen = observer(() => {
   const {booksListStore} = useStore();
   const [userId, setUserId] = useState<string>();
   const [username, setUsername] = useState<string>();
+  const [visible, setVisible] = useState<boolean>(false);
   const device = useCameraDevice('back');
 
   const subscriber = () => {
@@ -57,28 +59,7 @@ const HomeScreen = observer(() => {
         <View style={styles.greetingsContainer}>
           <Text style={styles.greetingsLabel}>
             Hello, {'\n'}
-            <Text
-              style={styles.nameLabel}
-              onPress={() => {
-                Alert.prompt(
-                  'Change your name',
-                  '',
-                  [
-                    {
-                      text: 'Cancel',
-                      onPress: () => console.log('Cancel Pressed'),
-                      style: 'cancel',
-                    },
-                    {
-                      text: 'Change',
-                      onPress: (text) => {
-                        changeName(text).then(() => setUsername(text));
-                      },
-                    },
-                  ],
-                  'plain-text',
-                );
-              }}>
+            <Text style={styles.nameLabel} onPress={() => setVisible(true)}>
               {username}
             </Text>
           </Text>
@@ -90,6 +71,14 @@ const HomeScreen = observer(() => {
             Start adding books to create your reading collection!
           </Text>
         )}
+        <InputDialog
+          visible={visible}
+          handleSearch={(text) => {
+            console.log(text);
+            changeName(text).then(() => setUsername(text));
+            setVisible(false);
+          }}
+        />
       </ScrollView>
       <View style={styles.bottomContainer}>
         <ScannerButton onScannerPress={onScannerPress} />

@@ -12,8 +12,12 @@ export function InputDialog({visible, handleCancel, handleSearch}) {
           Try to search for this book by title or author name
         </Dialog.Description>
         <Dialog.Input onChangeText={(query) => setQuery(query)} />
-        <Dialog.Button label="Cancel" onPress={handleCancel} />
-        <Dialog.Button label="Search" onPress={() => handleSearch(query)} />
+        {handleCancel && (
+          <Dialog.Button label="Cancel" onPress={handleCancel} />
+        )}
+        {handleSearch && (
+          <Dialog.Button label="Search" onPress={() => handleSearch(query)} />
+        )}
       </Dialog.Container>
     </View>
   );

@@ -69,10 +69,7 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
           },
         })}
       />
-      <Stack.Screen
-        name="CameraScaner"
-        component={CameraScanerScreen}
-      />
+      <Stack.Screen name="CameraScaner" component={CameraScanerScreen} />
     </Stack.Navigator>
   );
 };

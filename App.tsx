@@ -8,6 +8,8 @@ import {View, Text} from 'react-native';
 import { getUserData, setUserData } from './src/services/keychainService';
 import colorPallete from './src/styles/color';
 import { StoreProvider, rootStore } from './src/store';
+import SplashScreen from 'react-native-splash-screen';
+
 
 const MyTheme = {
   ...DefaultTheme,
@@ -25,14 +27,18 @@ function App(): JSX.Element {
   const [signedIn, setUserSignedIn] = useState(false);
 
   function onAuthStateChanged(user: any) {
-    getUserData().then(({uid}) =>  uid !== user.uid ?  setUserData({user}) : null);
-    setUserSignedIn(user ? true : false);
+    if (user !== null) {
+      getUserData().then(({uid}) =>  uid !== user.uid ?  setUserData({user}) : null);
+    }
+    setUserSignedIn(!!user ? true : false);
+  
     if (initializing) {
       setInitializing(false);
     }
   }
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    SplashScreen.hide();
     return subscriber;
   }, []);
 
@@ -47,9 +53,9 @@ function App(): JSX.Element {
 
   return (
     <StoreProvider value={rootStore}>
-    <NavigationContainer theme={MyTheme}>
-      <RootNavigation hasSignedIn={signedIn}/>
-    </NavigationContainer>
+      <NavigationContainer theme={MyTheme}>
+        <RootNavigation hasSignedIn={signedIn}/>
+      </NavigationContainer>
     </StoreProvider>
   );
 }
