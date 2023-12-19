@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,20 +13,19 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="center" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash_screen" translatesAutoresizingMaskIntoConstraints="NO" id="RiC-bm-dKd">
-                                <rect key="frame" x="-7" y="220" width="389" height="247"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash" translatesAutoresizingMaskIntoConstraints="NO" id="9KG-Ie-5GZ">
+                                <rect key="frame" x="0.0" y="47" width="390" height="763"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" red="0.9882352941176471" green="0.8784313725490196" blue="0.60784313725490191" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
-                            <constraint firstItem="RiC-bm-dKd" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Px8-QP-kiC"/>
-                            <constraint firstItem="RiC-bm-dKd" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="200" id="fSz-8h-TAh"/>
-                            <constraint firstItem="RiC-bm-dKd" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" constant="-23" id="heL-rW-iht"/>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="RiC-bm-dKd" secondAttribute="bottom" constant="200" id="oZS-JG-zb7"/>
+                            <constraint firstItem="9KG-Ie-5GZ" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="8hL-Nc-Qb8"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="9KG-Ie-5GZ" secondAttribute="trailing" id="NC4-cz-Qbe"/>
+                            <constraint firstItem="9KG-Ie-5GZ" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" id="ZzX-aW-9kj"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="9KG-Ie-5GZ" secondAttribute="bottom" id="dsW-vN-L5V"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -36,6 +35,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="splash_screen" width="500" height="500"/>
+        <image name="splash" width="625" height="625"/>
     </resources>
 </document>
