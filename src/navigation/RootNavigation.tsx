@@ -11,6 +11,7 @@ import BookPlayerModal from '../screens/BookPlayerScreen';
 import colorPallete from '../styles/color';
 import {resetUserData} from '../services/keychainService';
 import CameraScanerScreen from '../screens/CameraScanerScreen';
+import ReaderScreen from '../screens/ReaderScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -70,6 +71,7 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
         })}
       />
       <Stack.Screen name="CameraScaner" component={CameraScanerScreen} />
+      <Stack.Screen name="Reader" component={ReaderScreen} />
     </Stack.Navigator>
   );
 };

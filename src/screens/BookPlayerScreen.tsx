@@ -17,11 +17,14 @@ import EmptyHeartIcon from '../icons/EmptyHeartIcon';
 import {useStore} from '../store';
 import PlusIcon from '../icons/PlusIcon';
 import {InputDialog} from '../components/InputDialog';
+import {useCameraDevice} from 'react-native-vision-camera';
 
 function BookPlayerModal({route}) {
   const navigation = useNavigation();
   const {booksListStore} = useStore();
-  const bookData = booksListStore.findBookById(route.params.bookItem.id);
+  const bookData = isAdded
+    ? booksListStore.findBookById(route.params.bookItem.id)
+    : route.params.bookItem;
   const {volumeInfo, id, quoteList} = bookData;
   const {title, description, pageCount, categories, imageLinks, language} =
     volumeInfo;
@@ -30,6 +33,7 @@ function BookPlayerModal({route}) {
   const [isAdded, setIsAdded] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [visible, setVisible] = useState<boolean>(false);
+  const device = useCameraDevice('back');
 
   const handleSearch = (query) => {
     booksListStore.postQuote(
@@ -168,13 +172,20 @@ function BookPlayerModal({route}) {
             {description}
           </Text>
         )}
-        <View style={styles.quotesSection}>
-          <Text style={styles.quotesSectionLabel}>Saved quotes</Text>
-          <TouchableOpacity onPress={() => setVisible(true)}>
-            <PlusIcon color={colorPallete.secondary} size={30} />
-          </TouchableOpacity>
-        </View>
-        {quoteList && quoteList.map((item) => <Text>{item.title}</Text>)}
+        {isAdded && (
+          <View>
+            <View style={styles.quotesSection}>
+              <Text style={styles.quotesSectionLabel}>Saved quotes</Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('Reader', {device: device})
+                }>
+                <PlusIcon color={colorPallete.secondary} size={30} />
+              </TouchableOpacity>
+            </View>
+            {quoteList && quoteList.map((item) => <Text>{item.title}</Text>)}
+          </View>
+        )}
       </View>
     </ScrollView>
   );

@@ -8,6 +8,8 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
+import com.lazyquotesproject.mlkit.TextRecognitionPackage;
+
 import java.util.List;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 
@@ -24,6 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
+          packages.add(new TextRecognitionPackage());
           // Packages that cannot be autolinked yet can be added manually here, for example:
           return packages;
         }
