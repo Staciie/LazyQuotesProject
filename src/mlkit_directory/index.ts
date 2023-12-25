@@ -12,6 +12,7 @@ export type Rect = {
 export type Line = {
   text: string;
   rect: Rect;
+  angle: number;
 };
 
 export type Block = {

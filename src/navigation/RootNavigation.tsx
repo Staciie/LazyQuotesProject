@@ -12,6 +12,7 @@ import colorPallete from '../styles/color';
 import {resetUserData} from '../services/keychainService';
 import CameraScanerScreen from '../screens/CameraScanerScreen';
 import ReaderScreen from '../screens/ReaderScreen';
+import ProccessImageScreen from '../screens/ProccessImageScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -72,6 +73,7 @@ const RootNavigation = ({hasSignedIn}: {hasSignedIn: boolean}) => {
       />
       <Stack.Screen name="CameraScaner" component={CameraScanerScreen} />
       <Stack.Screen name="Reader" component={ReaderScreen} />
+      <Stack.Screen name="ProccessImage" component={ProccessImageScreen} />
     </Stack.Navigator>
   );
 };

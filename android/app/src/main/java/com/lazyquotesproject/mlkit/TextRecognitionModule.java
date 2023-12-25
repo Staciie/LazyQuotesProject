@@ -39,7 +39,7 @@ public class TextRecognitionModule extends ReactContextBaseJavaModule {
         WritableMap rectObject = Arguments.createMap();
         rectObject.putInt("left", rect.left);
         rectObject.putInt("top", rect.top);
-        rectObject.putInt("width", rect.right = rect.left);
+        rectObject.putInt("width", rect.right - rect.left);
         rectObject.putInt("height", rect.top - rect.bottom);
 
         return rectObject;
@@ -66,19 +66,19 @@ public class TextRecognitionModule extends ReactContextBaseJavaModule {
                                         WritableMap blockObject = Arguments.createMap();
                                         blockObject.putString("text", block.getText());
 
-                                        String blockText = block.getText();
-                                        Point[] blockCornerPoints = block.getCornerPoints();
                                         Rect blockFrame = block.getBoundingBox();
                                         blockObject.putMap("rect", getRectMap(blockFrame));
-
+                                        blockObject.putString("text", block.getText());
                                         WritableArray lines = Arguments.createArray();
                                         for (Text.Line line : block.getLines()) {
-                                            String lineText = line.getText();
-                                            Point[] lineCornerPoints = line.getCornerPoints();
+                                            float lineAngle = line.getAngle();
                                             Rect lineFrame = line.getBoundingBox();
+                                            float fontSize = lineFrame.bottom - lineFrame.top;
                                             WritableMap lineObject = Arguments.createMap();
                                             lineObject.putString("text", line.getText());
                                             lineObject.putMap("rect", getRectMap(lineFrame));
+                                            blockObject.putInt("angle", Math.round(lineAngle));
+                                            blockObject.putInt("size", Math.round(fontSize));
                                             lines.pushMap(lineObject);
                                         }
                                         blockObject.putArray("lines", lines);

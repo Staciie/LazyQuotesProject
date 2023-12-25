@@ -22,9 +22,10 @@ import {useCameraDevice} from 'react-native-vision-camera';
 function BookPlayerModal({route}) {
   const navigation = useNavigation();
   const {booksListStore} = useStore();
-  const bookData = isAdded
-    ? booksListStore.findBookById(route.params.bookItem.id)
-    : route.params.bookItem;
+  const bookData = booksListStore.findBookById(
+    route.params.bookItem?.id || route.params.id,
+  );
+  // : route.params.bookItem;
   const {volumeInfo, id, quoteList} = bookData;
   const {title, description, pageCount, categories, imageLinks, language} =
     volumeInfo;
@@ -178,12 +179,21 @@ function BookPlayerModal({route}) {
               <Text style={styles.quotesSectionLabel}>Saved quotes</Text>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('Reader', {device: device})
+                  navigation.navigate('Reader', {
+                    device: device,
+                    bookId: route.params.bookItem.id,
+                    userId: userId,
+                  })
                 }>
                 <PlusIcon color={colorPallete.secondary} size={30} />
               </TouchableOpacity>
             </View>
-            {quoteList && quoteList.map((item) => <Text>{item.title}</Text>)}
+            {quoteList &&
+              quoteList.map((item) => (
+                <Text style={styles.descLabel}>
+                  {item.title.replace(/(\r\n|\n|\r)/gm, '')}
+                </Text>
+              ))}
           </View>
         )}
       </View>

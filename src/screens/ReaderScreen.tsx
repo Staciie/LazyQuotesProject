@@ -1,6 +1,15 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Linking, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {Camera} from 'react-native-vision-camera';
+import {
+  Linking,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
+import {
+  Camera,
+  useCameraFormat,
+} from 'react-native-vision-camera';
 import {useNavigation} from '@react-navigation/native';
 import {observer} from 'mobx-react';
 import {recognizeImage} from '../mlkit_directory';
@@ -14,11 +23,12 @@ const CAMERA_PERMISSION = {
 };
 
 const ReaderScreen = observer(({route}) => {
-  const {device} = route.params;
+  const {device, bookId, userId} = route.params;
   const [cameraPermission, setCameraPermission] = useState<boolean>(false);
   const [cameraActive, setCameraActive] = useState(true);
   const navigation = useNavigation();
   const camera = useRef<Camera>(null);
+  const {width: windowWidth} = useWindowDimensions();
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -31,9 +41,21 @@ const ReaderScreen = observer(({route}) => {
     checkCameraPermission();
   }, []);
 
+  const format = useCameraFormat(device, []);
+
+  const aspectRatio = format?.photoWidth / format?.photoHeight;
+  console.log(aspectRatio);
+
   const proccessPhoto = async (url: string) => {
     try {
       const response = await recognizeImage(url);
+      navigation.navigate('ProccessImage', {
+        uri: url,
+        response: response,
+        aspectRatio: aspectRatio,
+        bookId: bookId,
+        userId: userId,
+      });
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -64,17 +86,21 @@ const ReaderScreen = observer(({route}) => {
       }
     }
   };
+
   return (
     cameraPermission && (
-      <View style={styles.container}>
+      <View style={{flex: 1}}>
         <Camera
-          style={StyleSheet.absoluteFill}
+          style={{width: windowWidth, height: windowWidth * aspectRatio}}
+          resizeMode="cover"
           device={device}
+          format={format}
           isActive={cameraActive}
           ref={camera}
           photo={true}
-          // implement torch button
+          orientation="portrait"
           torch={'off'}
+          zoom={device.minZoom}
         />
         <TouchableOpacity
           style={styles.takePhotoButton}
@@ -98,7 +124,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
-    backgroundColor: colorPallete.secondary
+    backgroundColor: colorPallete.secondary,
   },
 });
 export default ReaderScreen;
