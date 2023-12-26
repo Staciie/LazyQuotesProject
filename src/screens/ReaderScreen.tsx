@@ -6,10 +6,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import {
-  Camera,
-  useCameraFormat,
-} from 'react-native-vision-camera';
+import {Camera, useCameraFormat} from 'react-native-vision-camera';
 import {useNavigation} from '@react-navigation/native';
 import {observer} from 'mobx-react';
 import {recognizeImage} from '../mlkit_directory';

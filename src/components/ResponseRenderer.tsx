@@ -25,7 +25,7 @@ export const Block = ({line, scale}: BlockProps) => {
   return (
     <View style={[styles.lineView, {...rect}]}>
       <Text
-        style={[styles.text, {fontSize: line.size * scale}]}
+        style={[styles.text]}
         selectable={true}
         selectionColor="orange">
         {line.text}

@@ -31,7 +31,7 @@ target 'LazyQuotesProject' do
   $RNFirebaseAsStaticFramework = true
   # Flags change depending on the env values.
   flags = get_default_flags()
-
+  pod 'GoogleMLKit/TextRecognition'
   use_react_native!(
     :path => config[:reactNativePath],
     
@@ -46,7 +46,7 @@ target 'LazyQuotesProject' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
+ 
   target 'LazyQuotesProjectTests' do
     inherit! :complete
     # Pods for testing
