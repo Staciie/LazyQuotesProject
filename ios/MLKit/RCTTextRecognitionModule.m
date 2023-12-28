@@ -55,8 +55,6 @@ RCT_EXPORT_METHOD(recognizeImage:(NSString *)url
     
     NSMutableArray *blocks = [NSMutableArray array];
     
-
-    NSString *resultText = result.text;
     for (MLKTextBlock *block in result.blocks) {
       NSMutableDictionary *blockDict = [NSMutableDictionary dictionary];
       [blockDict setValue:block.text forKey:@"text"];

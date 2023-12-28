@@ -18,6 +18,7 @@ import {useStore} from '../store';
 import PlusIcon from '../icons/PlusIcon';
 import {InputDialog} from '../components/InputDialog';
 import {useCameraDevice} from 'react-native-vision-camera';
+import {QuoteCard} from '../components/QuoteCard';
 
 function BookPlayerModal({route}) {
   const navigation = useNavigation();
@@ -189,11 +190,17 @@ function BookPlayerModal({route}) {
               </TouchableOpacity>
             </View>
             {quoteList &&
-              quoteList.map((item) => (
-                <Text style={styles.descLabel}>
-                  {item.title.replace(/(\r\n|\n|\r)/gm, '')}
-                </Text>
-              ))}
+              quoteList.map(
+                (item) =>
+                  item.quoteText && (
+                    <QuoteCard
+                      quoteText={item.quoteText}
+                      pageNumber={item.pageNumber}
+                      labels={item.labels}
+                      notes={item.notes}
+                    />
+                  ),
+              )}
           </View>
         )}
       </View>
@@ -303,7 +310,7 @@ const styles = StyleSheet.create({
     color: colorPallete.textSecondary,
   },
   quotesSection: {
-    marginTop: 10,
+    marginVertical: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

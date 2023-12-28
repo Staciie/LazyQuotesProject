@@ -11,6 +11,7 @@ import {useNavigation} from '@react-navigation/native';
 import {observer} from 'mobx-react';
 import {recognizeImage} from '../mlkit_directory';
 import colorPallete from '../styles/color';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const CAMERA_PERMISSION = {
   GRANTED: 'granted',
@@ -18,6 +19,7 @@ const CAMERA_PERMISSION = {
   DENIED: 'denied',
   RESTRICTED: 'restricted',
 };
+const RESOLUTION = {width: 720, height: 1280};
 
 const ReaderScreen = observer(({route}) => {
   const {device, bookId, userId} = route.params;
@@ -37,23 +39,23 @@ const ReaderScreen = observer(({route}) => {
   useEffect(() => {
     checkCameraPermission();
   }, []);
-
-  const format = useCameraFormat(device, []);
-
-  const aspectRatio = format?.photoWidth / format?.photoHeight;
-  console.log(aspectRatio);
+  const format = useCameraFormat(device, [{photoResolution: RESOLUTION}]);
 
   const proccessPhoto = async (url: string) => {
     try {
-      const response = await recognizeImage(url);
-      navigation.navigate('ProccessImage', {
-        uri: url,
-        response: response,
-        aspectRatio: aspectRatio,
-        bookId: bookId,
-        userId: userId,
+      ImagePicker.openCropper({
+        ...RESOLUTION,
+        path: url,
+        freeStyleCropEnabled: true,
+      }).then(async (image) => {
+        const imagePath = `file://${image.path}`;
+        const response = await recognizeImage(imagePath);
+        navigation.navigate('ProccessImage', {
+          response: response,
+          bookId: bookId,
+          userId: userId,
+        });
       });
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -88,23 +90,19 @@ const ReaderScreen = observer(({route}) => {
     cameraPermission && (
       <View style={{flex: 1}}>
         <Camera
-          style={{width: windowWidth, height: windowWidth * aspectRatio}}
-          resizeMode="cover"
+          style={StyleSheet.absoluteFill}
           device={device}
-          format={format}
           isActive={cameraActive}
           ref={camera}
           photo={true}
           orientation="portrait"
-          torch={'off'}
-          zoom={device.minZoom}
+          torch={'on'}
         />
         <TouchableOpacity
           style={styles.takePhotoButton}
           onPress={async () => {
             const file = await camera.current.takePhoto();
             const result = `file://${file.path}`;
-            console.log(result);
             proccessPhoto(result);
           }}
         />
